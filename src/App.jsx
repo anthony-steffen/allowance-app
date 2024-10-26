@@ -1,7 +1,7 @@
-
+import ToggleButtonTheme from "./components/ToggleButtonTheme"
 const App = () => {
   return (
-    <div>App</div>
+    <ToggleButtonTheme />   
   )
 }
 
