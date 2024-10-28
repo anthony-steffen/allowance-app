@@ -1,25 +1,19 @@
 import { useForm } from 'react-hook-form'
-import theme from '../shared/theme';
-import {
-  Button,
-  VStack,
-  Container,
-  Heading,
-  Input,
-  FormControl,
-  FormLabel,
-  Alert,
-  AlertIcon,
-} from '@chakra-ui/react'
+import { Button, VStack, Container, Heading, Input, FormControl, FormLabel, Text, } from '@chakra-ui/react'
+import AuthContext from '../context/authContext';
+import { useContext } from 'react';
+
+
 
 const Login = () => {
-
-console.log(theme)
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const { login } = useContext(AuthContext); 
+
+  const onSubmit = data => {
+    login(data);
+  }
 
   return (
-
     <Container maxW='2xl'>
       <Heading 
         bgGradient='linear(to-l, #7928CA, #FF0080)'
@@ -33,35 +27,28 @@ console.log(theme)
 
       <VStack as='form' 
         onSubmit={handleSubmit(onSubmit)}
-        // spacing={4} 
         align='center' 
         w={{ base: '80%', md: '50%', xl: '50%' }}
         mx='auto'
       >
-        <FormControl isRequired>
-          <FormLabel ms={1} mb={0}>E-mail</FormLabel>
-          <Input
-          placeholder='my-email@exemple.com'
-          {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
-          />
-          {errors.email && <Alert status='error'>
-          {/* <AlertIcon /> */}
-          Email is required and must be valid
-          </Alert>}
-        </FormControl>
+        <FormControl mb={1} isRequired isInvalid={errors.email}>
+            <FormLabel ms={2} mb={0}>Email</FormLabel>
+            <Input
+              type="email"
+              placeholder="Digite seu email"
+              {...register("email")}
+            />
+            { errors.email && <Text color={'red.400'} size={'sm'}>O email é obrigatório</Text>}
+          </FormControl>
 
-        <FormControl isRequired>
-          <FormLabel ms={1} mb={0}>Password</FormLabel>
+        <FormControl imb={1} isRequired isInvalid={errors.Password}>
+          <FormLabel ms={2} mb={0}>Password</FormLabel>
           <Input
           placeholder='Password'
-          {...register('Password', { required: true, minLength: 8})}
+          {...register('Password', { minLength: 8})}
           />
-          {errors.Password && <Alert status='error'>
-         <AlertIcon />
-          Password must be longer than 8 characters
-          </Alert>}
+          {errors.Password && <Text color={'red.400'} size={'sm'}>A senha deve ter no mínimo 8 caracteres</Text>}
         </FormControl>
-
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
           Login
         </Button>

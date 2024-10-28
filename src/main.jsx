@@ -6,6 +6,9 @@ import { ChakraProvider } from '@chakra-ui/react'
 import theme  from './shared/theme'
 import ToggleButtonTheme from "./components/ToggleButtonTheme"
 
+//Context imports
+import AuthProvider from './context/authProvider.jsx'
+
 // Pages Imports
 import App from './App.jsx'
 import Login from './pages/Login.jsx'
@@ -18,15 +21,17 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ChakraProvider theme={theme}>
-      <ToggleButtonTheme />
-      <Router basename='/allowance-app'>
-        <Routes>
-          <Route path='/' element={ <App/>}/>
-          <Route path='/login' element={<Login/>}/>
-          <Route path='/register' element={<Register/>}/>
-          <Route path='/home' element={<Home/>}/>
-        </Routes>
-      </Router>
+      <AuthProvider>
+        <ToggleButtonTheme />
+        <Router basename='/allowance-app'>
+          <Routes>
+            <Route path='/' element={ <App/>}/>
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/register' element={<Register/>}/>
+            <Route path='/home' element={<Home/>}/>
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ChakraProvider>
   </StrictMode>
 )
