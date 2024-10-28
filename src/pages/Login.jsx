@@ -35,7 +35,7 @@ console.log(theme)
         onSubmit={handleSubmit(onSubmit)}
         // spacing={4} 
         align='center' 
-        w={{ base: '80%', md: '50%', xl: '55%' }}
+        w={{ base: '80%', md: '50%', xl: '50%' }}
         mx='auto'
       >
         <FormControl isRequired>
