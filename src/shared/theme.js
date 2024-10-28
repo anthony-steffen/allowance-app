@@ -19,16 +19,16 @@ const colors = {
   // Cores do fundo e texto
   background: {
     light: 'gray.50', // Branco para o modo claro
-    dark: 'gray.800', // Cinza escuro para o modo escuro
+    dark: 'gray.900', // Cinza escuro para o modo escuro
   },
   text: {
-    light: '#1e2030', // Cinza escuro para o modo claro
-    dark: '#f0e7db', // Bege claro para o modo escuro
+    light: 'gray.900', // Cinza escuro para o modo claro
+    dark: 'gray.200', // Bege claro para o modo escuro
   },
   // Cores do botão
   button: {
-    bgLight: '#070c18', // Vermelho para o modo claro
-    bgDark: '#070718', // Vermelho para o modo escuro
+    bgLight: 'red.800', // Vermelho para o modo claro
+    bgDark: 'black', // Vermelho para o modo escuro
   },
 }
 
@@ -38,9 +38,16 @@ const styles = {
     body: {
       bg: props.colorMode === 'dark' ? colors.background.dark : colors.background.light,
       color: props.colorMode === 'dark' ? colors.text.dark : colors.text.light,
+      fontFamily: 'body',
       justifyContent: 'center',
     },
   }),
+}
+
+// Definindo fontes personalizadas para o heading e body
+const fonts = {
+  heading: `'Irish Grover', 'Open Sans', 'regular'`,
+  body: `'Raleway', 'Open Sans', sans-serif`,
 }
 
 // Componentes personalizados, adaptando cores e variações
@@ -50,6 +57,7 @@ const components = {
       fontWeight: 'bold',
       borderRadius: 'lg',
       border: 'none',
+      width: '80%',
     },
     variants: {
       solid: (props) => ({
@@ -57,7 +65,7 @@ const components = {
         color: props.colorMode === 'dark' ? colors.text.dark : 'white',
         _hover: {
           bg: props.colorMode === 'dark' ? 
-          'black' // Cinza escuro para o modo escuro
+          'gray.700' // Cinza escuro para o modo escuro
           : 
           'silver', // Vermelho para o modo claro 
           color: props.colorMode === 'dark' ? colors.text.dark : 'black',
@@ -83,6 +91,7 @@ const theme = extendTheme({
   config,
   colors,
   styles,
+  fonts,
   components,
 })
 

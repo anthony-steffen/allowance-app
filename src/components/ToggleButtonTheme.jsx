@@ -7,7 +7,7 @@ const ToggleButtonTheme = () => {
 
 
   return (
-    <Box position='absolute' top={4} right={4}>
+    <Box position='absolute' right={4}>
       <IconButton
         onClick={toggleColorMode}
         fontSize={'2xl'}
@@ -16,7 +16,6 @@ const ToggleButtonTheme = () => {
         background={'none'}
         border={'none'}
         color = {`${colorMode === 'light' ? '#070c18' : 'yellow.400'}`}
-        _hover={'none'}
         icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
       /> 
     </Box>

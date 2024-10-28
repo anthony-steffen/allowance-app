@@ -13,6 +13,8 @@
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.0.0",
     "@emotion/react": "^11.13.3",
+    "@fontsource/open-sans": "^5.1.0",
+    "@fontsource/raleway": "^5.1.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
