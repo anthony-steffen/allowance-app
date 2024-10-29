@@ -6,11 +6,12 @@ import { useContext } from 'react';
 
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const { login } = useContext(AuthContext); 
 
   const onSubmit = data => {
     login(data);
+    reset()
   }
 
   return (
@@ -38,7 +39,7 @@ const Login = () => {
               placeholder="Digite seu email"
               {...register("email")}
             />
-            { errors.email && <Text color={'red.400'} size={'sm'}>O email é obrigatório</Text>}
+            { errors.email && <Text color={'red.400'} size={'sm'}>{errors.email.message}</Text>}
           </FormControl>
 
         <FormControl imb={1} isRequired isInvalid={errors.Password}>
@@ -47,7 +48,7 @@ const Login = () => {
           placeholder='Password'
           {...register('Password', { minLength: 8})}
           />
-          {errors.Password && <Text color={'red.400'} size={'sm'}>A senha deve ter no mínimo 8 caracteres</Text>}
+          {errors.Password && <Text color={'red.400'} size={'sm'}>{errors.Password.message}</Text>}
         </FormControl>
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
           Login

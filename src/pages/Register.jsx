@@ -8,15 +8,22 @@ import {
   Input,
   FormControl,
   FormLabel,
-  Alert,
-  AlertIcon,
+  Text,
 } from '@chakra-ui/react'
+import { useContext } from 'react';
+import AuthContext from '../context/authContext';
 
 const Register = () => {
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
+  const {login} = useContext(AuthContext);
 
-  const onSubmit = data => console.log(data);
+  const password = watch('password');
+
+  const onSubmit = data => {
+    login(data);
+    reset();
+  }
 
   return (
 
@@ -37,45 +44,68 @@ const Register = () => {
         w={{ base: '80%', md: '50%', xl: '50%' }}
         mx='auto'
       >
-        <FormControl isRequired>
-          <FormLabel ms={1} mb={0}>E-mail</FormLabel>
-          <Input
-          placeholder='my-email@exemple.com'
-          {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
-          />
-          {errors.email && <Alert status='error'>
-          {/* <AlertIcon /> */}
-          Email is required and must be valid
-          </Alert>}
+        <FormControl mb={1} isInvalid={errors.name}>
+            <FormLabel ms={2} mb={0}>Name</FormLabel>
+            <Input
+              type="text"
+              placeholder="Digite seu nome"
+              {...register("name", {
+                // required: "O nome é obrigatório",
+                minLength: {
+                  value: 3,
+                  message: "O nome deve ter no mínimo 3 caracteres"
+                },
+                pattern: {
+                  value: /^[A-Za-z]+$/i,
+                  message: "O nome deve conter apenas letras"
+                }    
+              })}        
+            />
+            { errors.name && <Text color={'red.400'} size={'sm'}>{errors.name.message}</Text>}
         </FormControl>
 
-        <FormControl isRequired>
-          <FormLabel ms={1} mb={0}>Password</FormLabel>
+        <FormControl mb={1} isInvalid={errors.email}>
+            <FormLabel ms={2} mb={0}>Email</FormLabel>
+            <Input
+              type="email"
+              placeholder="Digite seu email"
+              {...register("email", {
+              required: "O email é obrigatório",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                message: "email inválido"
+              }
+            })}
+            />
+            { errors.email && <Text color={'red.400'} size={'sm'}>{errors.email.message}</Text>}
+          </FormControl>
+
+        <FormControl mb={1} isInvalid={errors.password}>
+          <FormLabel ms={2} mb={0}>Password</FormLabel>
           <Input
           placeholder='Password'
-          type='password'
-          {...register('Password', { required: true, minLength: 8})}
+          {...register('password', { 
+            required: 'A senha é obrigatória',
+            minLength: { value: 8, message: "A senha deve ter pelo menos 8 caracteres" },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: "A senha deve conter letras maiúsculas, minúsculas, números e um caractere especial"
+              }
+          })}
           />
-          {errors.Password && <Alert status='error'>
-         <AlertIcon />
-          Password must be longer than 8 characters
-          </Alert>}
+          {errors.password && <Text color={'red.400'} size={'sm'}>{errors.password.message}</Text>}
         </FormControl>
 
-        <FormControl isRequired>
-          <FormLabel ms={1} mb={0}>Confirm Password</FormLabel>
+        <FormControl imb={1} isInvalid={errors.confirmPassword}>
+          <FormLabel ms={2} mb={0}>Confirm Password</FormLabel>
           <Input
-            placeholder='Confirm Password'
-            type="password"
-            {...register('confirmPassword', { 
-              required: true, 
-              validate: value => value === watch('Password') || 'As senhas não são iguais.'
-            })}
+          placeholder='Confirm Password'
+          {...register('confirmPassword', {
+            required: 'Confirme a senha',
+            validate: value => value === password || 'As senhas não correspondem'
+          })}
           />
-          {errors.confirmPassword && <Alert status='error'>
-            <AlertIcon />
-            {errors.confirmPassword.message}
-          </Alert>}
+          {errors.confirmPassword && <Text color={'red.400'} size={'sm'}>{errors.confirmPassword.message}</Text>}
         </FormControl>
         
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
