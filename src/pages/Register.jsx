@@ -1,5 +1,7 @@
+//Imports hook-form
 import { useForm } from 'react-hook-form'
 
+//Imports Chakra UI
 import {
   Button,
   VStack,
@@ -9,22 +11,39 @@ import {
   FormControl,
   FormLabel,
   Text,
+  useToast,
 } from '@chakra-ui/react'
+
+//Imports AuthContext
 import { useContext } from 'react';
 import AuthContext from '../context/authContext';
 
+// Imports react-router-dom to navigate between pages
+import { useNavigate } from 'react-router-dom';
+
 const Register = () => {
 
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
   const {login} = useContext(AuthContext);
 
   const password = watch('password');
-
+  const toast = useToast();
   const onSubmit = data => {
     login(data);
     reset();
+    toast({
+      title: 'Usuário cadastrado com sucesso',
+      description: 'Você será redirecionado para a página de Login',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+    setTimeout(() => {
+      navigate('/login');
+    }
+    , 5000);
   }
-
   return (
 
     <Container maxW='2xl'>
@@ -107,7 +126,7 @@ const Register = () => {
           />
           {errors.confirmPassword && <Text color={'red.400'} size={'sm'}>{errors.confirmPassword.message}</Text>}
         </FormControl>
-        
+
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
           Register
         </Button>

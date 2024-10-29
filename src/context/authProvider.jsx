@@ -15,11 +15,15 @@ const AuthProvider = ({ children }) => {
   });
 
   // Função de login para armazenar os dados do usuário
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
-
+  const login = (credentials) => {
+    // Verifica se o usuário existe no localStorage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    //Caso não exista, armazena os dados do usuário
+    if (!storedUser) {
+      localStorage.setItem('user', JSON.stringify(credentials));
+      setUser(credentials);
+    }
+  }
   // Função de logout para remover os dados do usuário
   const logout = () => {
     setUser(null);
@@ -35,7 +39,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   // useMemo para memoizar o valor do contexto, evitando recriações desnecessárias
-  const store = useMemo(() => ({ user, login, logout }), [user]);
+  const store = useMemo(() => ({ user, setUser, login, logout }), [user]);
 
   return (
     <Provider value={store}>

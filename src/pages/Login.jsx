@@ -1,17 +1,72 @@
+//Imports hook-form
 import { useForm } from 'react-hook-form'
-import { Button, VStack, Container, Heading, Input, FormControl, FormLabel, Text, } from '@chakra-ui/react'
+
+//Imports Chakra UI
+import { 
+  Button, 
+  VStack, 
+  Container, 
+  Heading, 
+  Input, 
+  FormControl, 
+  FormLabel, 
+  Text,
+  useToast
+} from '@chakra-ui/react'
+
+//Imports AuthContext
 import AuthContext from '../context/authContext';
 import { useContext } from 'react';
 
-
+//Imports react-router-dom to navigate between pages
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
-  const { login } = useContext(AuthContext); 
+  const { login } = useContext(AuthContext);
+
+  //Get user data from localStorage if it exists
+  const findUser = localStorage.getItem('user');
+  const users = JSON.parse(findUser);
+
+  //Instance of useNavigate and useToast to send messages management
+  const navigate = useNavigate();
+  const toast = useToast();
+
 
   const onSubmit = data => {
-    login(data);
-    reset()
+    if (users) {
+      if (data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
+        login(data);
+        reset();
+        toast({
+          title: 'Login efetuado com sucesso',
+          description: 'Você será redirecionado para a página de Allowance',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          navigate('/home');
+        }, 5000);
+      } else {
+        toast({
+          title: 'Email ou senha incorretos',
+          description: 'Por favor, tente novamente',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        title: 'Usuário não cadastrado',
+        description: 'Por favor, cadastre-se',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   }
 
   return (
@@ -46,10 +101,19 @@ const Login = () => {
           <FormLabel ms={2} mb={0}>Password</FormLabel>
           <Input
           placeholder='Password'
-          {...register('Password', { minLength: 8})}
+          {...register('password', { 
+            required: 'A senha é obrigatória',
+            minLength: { value: 8, message: "A senha deve ter pelo menos 8 caracteres" },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_]+)[A-Za-z\d@$!%*?&_]{8,}$/,
+           
+                message: "A senha deve conter letras maiúsculas, minúsculas, números e pelo menos um caractere especial"
+              }
+          })}
           />
-          {errors.Password && <Text color={'red.400'} size={'sm'}>{errors.Password.message}</Text>}
+          {errors.password && <Text color={'red.400'} size={'sm'}>{errors.password.message}</Text>}
         </FormControl>
+
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
           Login
         </Button>
