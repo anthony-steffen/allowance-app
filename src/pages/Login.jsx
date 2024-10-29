@@ -21,52 +21,79 @@ import { useContext } from 'react';
 //Imports react-router-dom to navigate between pages
 import { useNavigate } from 'react-router-dom';
 
+//Import Crypto function to decrypt the user's data
+import { decrypt } from '../shared/crypto';
+
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const { login } = useContext(AuthContext);
 
-  //Get user data from localStorage if it exists
-  const findUser = localStorage.getItem('user');
-  const users = JSON.parse(findUser);
-
+  
   //Instance of useNavigate and useToast to send messages management
   const navigate = useNavigate();
   const toast = useToast();
-
-
+  
+  
   const onSubmit = data => {
-    if (users) {
-      if (data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
-        login(data);
-        reset();
-        toast({
-          title: 'Login efetuado com sucesso',
-          description: 'Você será redirecionado para a página de Allowance',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        setTimeout(() => {
-          navigate('/home');
-        }, 5000);
-      } else {
-        toast({
-          title: 'Email ou senha incorretos',
-          description: 'Por favor, tente novamente',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+
+    //Get user data from localStorage if it exists
+    const findUser = localStorage.getItem('user');
+    const users = findUser ? decrypt(findUser) : null;
+
+    if (users && data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
+      login(data);
+      reset();
+      toast({
+        title: 'Seja Bem-Vindo',
+        description: 'Você será redirecionado para a página de tarefas',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        navigate('/home');
+      }, 5000);
     } else {
       toast({
-        title: 'Usuário não cadastrado',
-        description: 'Por favor, cadastre-se',
+        title: 'Email ou senha incorretos',
+        description: 'Por favor, tente novamente',
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
     }
+    // if (users) {
+    //   if (data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
+    //     login(data);
+    //     reset();
+    //     toast({
+    //       title: 'Login efetuado com sucesso',
+    //       description: 'Você será redirecionado para a página de Allowance',
+    //       status: 'success',
+    //       duration: 5000,
+    //       isClosable: true,
+    //     });
+    //     setTimeout(() => {
+    //       navigate('/home');
+    //     }, 5000);
+    //   } else {
+    //     toast({
+    //       title: 'Email ou senha incorretos',
+    //       description: 'Por favor, tente novamente',
+    //       status: 'error',
+    //       duration: 5000,
+    //       isClosable: true,
+    //     });
+    //   }
+    // } else {
+    //   toast({
+    //     title: 'Usuário não cadastrado',
+    //     description: 'Por favor, cadastre-se',
+    //     status: 'error',
+    //     duration: 5000,
+    //     isClosable: true,
+    //   });
+    // }
   }
 
   return (
