@@ -1,29 +1,32 @@
 import {useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-
-// Importando o contexto criado
 import AuthContext from './authContext';
+import { encrypt, decrypt } from '../shared/crypto';
 
 // Criando o provedor de autenticação
 const { Provider } = AuthContext;
 
-// import Crypto to encrypt the user's data
-import { encrypt, decrypt } from '../shared/crypto';
 
 const AuthProvider = ({ children }) => {
-  // Carrega o usuário do localStorage, se houver um.
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
-    return storedUser ? encrypt(JSON.parse(storedUser)) : null;
+    if (storedUser) {
+      try {
+        return decrypt(storedUser); // Tente descriptografar o usuário
+      } catch (error) {
+        console.error('Erro ao descriptografar os dados do usuário:', error);
+        localStorage.removeItem('user'); // Remove o dado inválido
+        return null; // Retorne null se houver um erro
+      }
+    }
+    return null; // Retorne null se não houver usuário armazenado
   });
 
-  // Função de login para armazenar os dados do usuário
   const login = (data) => {
     setUser(data);
     localStorage.setItem('user', encrypt(data));
-  }
-  
-  // Função de logout para remover os dados do usuário
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
