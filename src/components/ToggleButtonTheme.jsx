@@ -7,7 +7,7 @@ const ToggleButtonTheme = () => {
 
 
   return (
-    <Box position='absolute' right={4}>
+    <Box position='absolute' right={4} top={4}>
       <IconButton
         onClick={toggleColorMode}
         fontSize={'2xl'}

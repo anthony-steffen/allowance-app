@@ -27,8 +27,8 @@ const colors = {
   },
   // Cores do botão
   button: {
-    bgLight: 'red.800', // Vermelho para o modo claro
-    bgDark: 'black', // Vermelho para o modo escuro
+    bgLight: 'teal.800', // Vermelho para o modo claro
+    bgDark: 'black', // preto para o modo escuro
   },
 }
 
@@ -65,9 +65,9 @@ const components = {
         color: props.colorMode === 'dark' ? colors.text.dark : 'white',
         _hover: {
           bg: props.colorMode === 'dark' ? 
-          'gray.700' // Cinza escuro para o modo escuro
+          'teal.700' // Cinza escuro para o modo escuro
           : 
-          'silver', // Vermelho para o modo claro 
+          'teal.600', // Vermelho para o modo claro 
           color: props.colorMode === 'dark' ? colors.text.dark : 'black',
         },
       }),
