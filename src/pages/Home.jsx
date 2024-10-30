@@ -1,10 +1,14 @@
 // Home.jsx
 import { useContext } from 'react';
-import { Alert, AlertIcon, Box, Button, Card, CardBody, CardFooter, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Card, CardBody, CardFooter, CircularProgress, CircularProgressLabel, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import TaskContext from '../context/taskContext';
 
 const Home = () => {
   const { tasks, loadDailyTasks, toggleTaskCompletion } = useContext(TaskContext);
+
+  const progress = tasks.filter(task => task.isCompleted).length / tasks.length * 100;
+
+  console.log(progress);
 
 
   return (
@@ -12,11 +16,17 @@ const Home = () => {
       <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
         Minhas Tarefas Diárias
       </Heading>
-
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
       {/* Botão para carregar as tarefas diárias */}
-      <Button colorScheme="teal" mb={6} width="full" onClick={loadDailyTasks}>
+      <Button colorScheme="teal" onClick={loadDailyTasks}>
         Carregar Tarefas Diárias
       </Button>
+          <CircularProgress value={progress} color='green.400' size={{base: '50px', md: '60px'}}>
+            <CircularProgressLabel color={'black'} fontWeight={'bold'} fontSize={'sm'}>
+            {progress ? `${progress.toFixed(0)}%` : '0%'}
+            </CircularProgressLabel>
+          </CircularProgress>
+      </Flex>
 
       {tasks.map(task => (
         <Card key={task.id} mb={4}>
@@ -52,7 +62,6 @@ const Home = () => {
               </Button>
           </CardFooter>
         </Card>
-
       ))}
     </Box>
   );
