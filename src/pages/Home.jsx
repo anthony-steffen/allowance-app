@@ -9,6 +9,7 @@ const Home = () => {
   const { tasks, loadDailyTasks, toggleTaskCompletion, completeAllTasks, loaded } = useContext(TaskContext);
   const colorMode = useColorMode();
   const progress = tasks.filter(task => task.isCompleted).length / tasks.length * 100;
+  const allCompleted = tasks.every(task => task.isCompleted);
 
   return (
     <Flex p={6} maxW="800px" mx="auto" direction="column">
@@ -16,42 +17,41 @@ const Home = () => {
         Minhas Tarefas Diárias
       </Heading>
       <Flex justifyContent="space-between" alignItems="center" mb={4} direction={{base: 'column', md: 'row'}} gap={4}>
-          {/* Botão para carregar as tarefas diárias */}
-          { !loaded ? (
-            <Button
-            colorScheme="teal"
-            maxW='140px'
-            onClick={loadDailyTasks}
-            disabled={loaded}
-            >
-              Carregar Tarefas
-            </Button> 
-          ) : (
-            <Button
-            bg={'teal.500'}
-            maxW='140px'
-            onClick={completeAllTasks}
-            >
-              Concluir Tarefas
-            </Button>
-          )}
-         
-        <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
-          {`Recompensa: ${tasks.reduce((acc, task) => acc + (task.isCompleted ? task.value : 0), 0).toFixed(2)}`}
-        </Text>
-
         <CircularProgress 
         value={progress} 
-        color={ progress <=25 ? 'red.500' : progress <= 50 ? 'yellow.500' : progress <= 75? 'blue.500' : 'green.500'}
+        color={ progress <=30 ? 'red.500' : progress <= 60 ? 'yellow.500' : progress <= 99? 'blue.500' : 'green.500'}
         size={{base: '50px', md: '60px'}}
         >
           <CircularProgressLabel 
-          color={colorMode.colorMode === 'dark' ? 'white' : 'black'}
+          color={colorMode.colorMode === 'dark' ? 'gray.200' : 'black'}
           fontWeight={'bold'} 
           fontSize={'sm'}>
           {progress ? `${progress.toFixed(0)}%` : '0%'}
           </CircularProgressLabel>
         </CircularProgress>
+
+        <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
+          {`Recompensa: ${tasks.reduce((acc, task) => acc + (task.isCompleted ? task.value : 0), 0).toFixed(2)}`}
+        </Text>
+
+            {/* Botão para carregar as tarefas diárias */}
+            { !loaded ? (
+              <Button
+              maxW='140px'
+              onClick={loadDailyTasks}
+              >
+                Carregar Tarefas
+              </Button> 
+            ) : (
+              <Button
+              maxW='140px'
+              onClick={() => { completeAllTasks() }}
+              bg={allCompleted ? 'teal.700' : 'black'}
+              color={!allCompleted ? 'white' : 'yellow.100'}
+              >
+                {tasks.every(task => task.isCompleted) ? 'Concluidas' : 'Concluir Todas'}
+              </Button>
+            )}
       </Flex>
 
       {tasks.map(task => (
@@ -87,7 +87,8 @@ const Home = () => {
               </Flex>
               <Button
                 variant="solid"
-                colorScheme={task.isCompleted ? 'green' : 'blue'}
+                bg={task.isCompleted ? 'teal.700' : 'black'}
+                color={!task.isCompleted ? 'white' : 'yellow.100'}
                 onClick={() => toggleTaskCompletion(task.id)}
                 maxW={'90px'}
                 size={'md'}

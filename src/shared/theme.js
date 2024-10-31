@@ -27,7 +27,7 @@ const colors = {
   },
   // Cores do botão
   button: {
-    bgLight: 'teal.800', // Vermelho para o modo claro
+    bgLight: 'black', // Vermelho para o modo claro
     bgDark: 'black', // preto para o modo escuro
   },
 }
