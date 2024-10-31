@@ -1,8 +1,8 @@
-import ToggleButtonTheme from "./components/ToggleButtonTheme"
+import Hero from "./pages/Hero";
 const App = () => {
   return (
-    <ToggleButtonTheme />   
-  )
-}
+    <Hero />
+  );
+};
 
 export default App
