@@ -11,7 +11,8 @@ import {
   FormControl, 
   FormLabel, 
   Text,
-  useToast
+  useToast,
+  Box
 } from '@chakra-ui/react'
 
 //Imports AuthContext
@@ -19,7 +20,7 @@ import AuthContext from '../context/authContext';
 import { useContext } from 'react';
 
 //Imports react-router-dom to navigate between pages
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 //Import Crypto function to decrypt the user's data
 import { decrypt } from '../shared/crypto';
@@ -62,38 +63,6 @@ const Login = () => {
         isClosable: true,
       });
     }
-    // if (users) {
-    //   if (data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
-    //     login(data);
-    //     reset();
-    //     toast({
-    //       title: 'Login efetuado com sucesso',
-    //       description: 'Você será redirecionado para a página de Allowance',
-    //       status: 'success',
-    //       duration: 5000,
-    //       isClosable: true,
-    //     });
-    //     setTimeout(() => {
-    //       navigate('/home');
-    //     }, 5000);
-    //   } else {
-    //     toast({
-    //       title: 'Email ou senha incorretos',
-    //       description: 'Por favor, tente novamente',
-    //       status: 'error',
-    //       duration: 5000,
-    //       isClosable: true,
-    //     });
-    //   }
-    // } else {
-    //   toast({
-    //     title: 'Usuário não cadastrado',
-    //     description: 'Por favor, cadastre-se',
-    //     status: 'error',
-    //     duration: 5000,
-    //     isClosable: true,
-    //   });
-    // }
   }
 
   return (
@@ -105,7 +74,7 @@ const Login = () => {
         textAlign='center'
         my={10}
       >
-        ALLAWANCE-APP
+        ALLOWANCE
       </Heading>
 
       <VStack as='form' 
@@ -144,6 +113,14 @@ const Login = () => {
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
           Login
         </Button>
+        <Box>
+          <Text align={'center'} fontSize={'sm'} mt={2}>
+            Não tem uma conta?
+          </Text>
+          <Link to='/register'>
+            <Text align={'center'} fontSize={'sm'}mt={1}>Registre-se</Text>
+          </Link>
+        </Box>
     
       </VStack>
     </Container>

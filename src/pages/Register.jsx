@@ -54,7 +54,7 @@ const Register = () => {
         textAlign='center'
         my={10}
       >
-        ALLAWANCE-APP
+        ALLOWANCE
       </Heading>
 
       <VStack as='form' 
