@@ -5,14 +5,14 @@ import { useForm } from 'react-hook-form'
 import { 
   Button, 
   VStack, 
-  Container, 
   Heading, 
   Input, 
   FormControl, 
   FormLabel, 
   Text,
   useToast,
-  Box
+  Box,
+  Flex
 } from '@chakra-ui/react'
 
 //Imports AuthContext
@@ -66,7 +66,7 @@ const Login = () => {
   }
 
   return (
-    <Container maxW='2xl'>
+    <Flex maxW='2xl' mx='auto' direction='column' align='center' >
       <Heading 
         bgGradient='linear(to-l, #7928CA, #FF0080)'
         bgClip='text'
@@ -123,7 +123,7 @@ const Login = () => {
         </Box>
     
       </VStack>
-    </Container>
+    </Flex>
   )
 }
 
