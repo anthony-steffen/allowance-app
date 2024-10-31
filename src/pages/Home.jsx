@@ -6,11 +6,9 @@ import TaskContext from '../context/taskContext';
 import {CheckCircleIcon, WarningIcon, } from '@chakra-ui/icons';
 
 const Home = () => {
-  const { tasks, loadDailyTasks, toggleTaskCompletion } = useContext(TaskContext);
-
-  const progress = tasks.filter(task => task.isCompleted).length / tasks.length * 100;
-
+  const { tasks, loadDailyTasks, toggleTaskCompletion, completeAllTasks, loaded } = useContext(TaskContext);
   const colorMode = useColorMode();
+  const progress = tasks.filter(task => task.isCompleted).length / tasks.length * 100;
 
   return (
     <Flex p={6} maxW="800px" mx="auto" direction="column">
@@ -18,12 +16,26 @@ const Home = () => {
         Minhas Tarefas Diárias
       </Heading>
       <Flex justifyContent="space-between" alignItems="center" mb={4} direction={{base: 'column', md: 'row'}} gap={4}>
-      {/* Botão para carregar as tarefas diárias */}
-        <Button colorScheme="teal" maxW='140px' onClick={loadDailyTasks}>
-          Carregar Tarefas
-        </Button>
-
-      <Flex alignItems="center" justifyContent="space-around" w='100%'>
+          {/* Botão para carregar as tarefas diárias */}
+          { !loaded ? (
+            <Button
+            colorScheme="teal"
+            maxW='140px'
+            onClick={loadDailyTasks}
+            disabled={loaded}
+            >
+              Carregar Tarefas
+            </Button> 
+          ) : (
+            <Button
+            bg={'teal.500'}
+            maxW='140px'
+            onClick={completeAllTasks}
+            >
+              Concluir Tarefas
+            </Button>
+          )}
+         
         <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
           {`Recompensa: ${tasks.reduce((acc, task) => acc + (task.isCompleted ? task.value : 0), 0).toFixed(2)}`}
         </Text>
@@ -40,7 +52,6 @@ const Home = () => {
           {progress ? `${progress.toFixed(0)}%` : '0%'}
           </CircularProgressLabel>
         </CircularProgress>
-        </Flex>
       </Flex>
 
       {tasks.map(task => (
