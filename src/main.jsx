@@ -18,6 +18,7 @@ import Home from './pages/Home.jsx'
 
 //Router-Dom imports
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import AdminDashboard from './pages/AdminDashboard.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
               <Route path='/login' element={<Login/>}/>
               <Route path='/register' element={<Register/>}/>
               <Route path='/home' element={<Home/>}/>
+              <Route path='/admin' element={<AdminDashboard/>}/>
             </Routes>
           </Router>
         </TaskProvider>
