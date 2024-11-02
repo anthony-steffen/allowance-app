@@ -68,6 +68,7 @@ const TaskProvider = ({ children }) => {
   // Salva as tarefas concluídas no taskHistory
   const recordCompletedTasks = useCallback(() => {
     const completedTasks = tasks.filter(task => task.done);
+    const notCompletedTasks = tasks.filter(task => !task.done);
     const dailyTotal = completedTasks.reduce((acc, task) => acc + task.value, 0);
     const today = new Date().toISOString().split('T')[0];
 
@@ -88,8 +89,11 @@ const TaskProvider = ({ children }) => {
       ...prevHistory,
       {
         date: today,
+        tasks: [{ completedTasks, notCompletedTasks }],
         dailyTotal,
         requestedApproval: true,
+        completedTasks,
+        notCompletedTasks,
         approved: false,
       },
     ]);
