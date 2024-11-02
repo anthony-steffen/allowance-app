@@ -5,7 +5,7 @@ import { Button, Card, Text, Flex } from '@chakra-ui/react';
 const AdminDashboard = () => {
   const { taskHistory, approveTask, rejectTask } = useContext(TaskContext);
 
-  console.log('taskHistory', taskHistory);
+  console.log('taskHistory on AdminDashboard', taskHistory);
   return (
     <Flex direction="column" p={6}>
       <Text fontSize="xl" mb={4}>Registros Pendentes para Aprovação</Text>
