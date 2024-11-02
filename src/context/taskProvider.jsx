@@ -3,22 +3,51 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import TaskContext from './taskContext';
 import { dailyTasks } from '../shared/tasks';
+import { useToast } from '@chakra-ui/react';
 
 const { Provider } = TaskContext;
 
 const TaskProvider = ({ children }) => {
+
   const [tasks, setTasks] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [approvalRequested, setApprovalRequested] = useState(false);
+  const [lastLoadDate, setLastLoadDate] = useState(() => {
+    const savedDate = localStorage.getItem('lastLoadDate');
+    return savedDate ? savedDate : [];
+  });
   const [taskHistory, setTaskHistory] = useState(() => {
     const savedHistory = localStorage.getItem('taskHistory');
     return savedHistory ? JSON.parse(savedHistory) : [];
   }); // Histórico de tarefas concluídas
+
+  const toast = useToast();
+
   
   // Função para carregar tarefas diárias ao clicar em um botão
   const loadDailyTasks = useCallback(() => {
-    setTasks(dailyTasks.map(task => ({ ...task })));
+ 
+    const today = new Date().toISOString().split('T')[0];
+
+    // Verifica se as tarefas já foram carregadas hoje ou se aprovação foi solicitada
+    if (lastLoadDate === today || approvalRequested) {
+      toast({
+        title: 'Erro',
+        description: 'As tarefas de hoje já foram carregadas.',
+        status: 'error',
+        position: 'center',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setTasks(dailyTasks);
     setLoaded(true);
-  }, []);
+    setLastLoadDate(today);
+    localStorage.setItem('lastLoadDate', today);
+  }, [lastLoadDate, approvalRequested, toast]);
+
   
   // Função para alternar o status de conclusão de uma tarefa
   const toggleTaskCompletion = (taskId) => {
@@ -40,19 +69,44 @@ const TaskProvider = ({ children }) => {
   const recordCompletedTasks = useCallback(() => {
     const completedTasks = tasks.filter(task => task.done);
     const dailyTotal = completedTasks.reduce((acc, task) => acc + task.value, 0);
-    
-    const newHistoryEntry = {
-      date: Date.now(),
-      dailyTotal,
-      tasks: completedTasks,
-      requestedApproval: true,
-      approved: false,
-    };
+    const today = new Date().toISOString().split('T')[0];
 
-    setTaskHistory(prevHistory => [...prevHistory, newHistoryEntry]);
-    setTasks([]);
+    // Verifica se já foi solicitada a aprovação das tarefas de hoje
+    if (taskHistory.some(record => record.date === today)) {
+      toast({
+        title: 'Erro',
+        description: 'Você já solicitou a aprovação das tarefas de hoje.',
+        status: 'error',
+        position: 'center',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setTaskHistory(prevHistory => [
+      ...prevHistory,
+      {
+        date: today,
+        dailyTotal,
+        requestedApproval: true,
+        approved: false,
+      },
+    ]);
+
+    setApprovalRequested(true);
+    toast({
+      title: 'Parabéns por concluir suas tarefas!',
+      description: 'Solicitação de aprovação enviada.',
+      status: 'success',
+      position: 'center',
+      duration: 3000,
+      isClosable: true,
+    });
     setLoaded(false);
-  }, [tasks]);
+    setTasks([]);
+  }, [tasks, taskHistory, toast]);
+
 
   // Efeito para salvar o histórico no localStorage
   useEffect(() => {
