@@ -96,8 +96,8 @@ const TaskProvider = ({ children }) => {
 
     setApprovalRequested(true);
     toast({
-      title: 'Parabéns por concluir suas tarefas!',
-      description: 'Solicitação de aprovação enviada.',
+      title: 'Sucesso!',
+      description: 'Solicitação enviada para aprovação.',
       status: 'success',
       position: 'center',
       duration: 3000,
