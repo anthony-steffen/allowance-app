@@ -18,7 +18,7 @@ const Home = () => {
       </Heading>
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
-      {sendToApproval.some(record => record.date === today && record.requestedApproval) ? (
+      {sendToApproval.some(record => record.date === today) ? (
         <Text fontSize="lg" color="teal.600" textAlign="center" mt={6}>
           Parabéns por concluir suas tarefas, nos vemos amanhã!
         </Text>
