@@ -9,7 +9,7 @@ const Home = () => {
   const progress = tasks.filter(task => task.done).length / tasks.length * 100;
   const allCompleted = tasks.every(task => task.done);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString('pt-BR');
 
   return (
     <Flex p={6} maxW="800px" mx="auto" direction="column">

@@ -7,10 +7,7 @@ const AdminDashboard = () => {
   const {sendToApproval, approveTask, rejectTask} = useContext(TaskContext);
   const mode = useColorMode();
 
-  // achatando o array
-  const finalAprove = sendToApproval.some(record => record.approved);
-
-
+  const finalApprove = sendToApproval.some(record => record.approved);
 
   return (  
     <Flex p={6} maxW="800px" mx="auto" direction="column">
@@ -22,7 +19,7 @@ const AdminDashboard = () => {
         Histórico de Tarefas
       </Text>
 
-      {!finalAprove && sendToApproval.map(task => (
+      {!finalApprove && sendToApproval.map(task => (
         <Container bg={mode.colorMode === 'dark' ? 'gray.800' : 'gray.100'} p={4} borderRadius={8} boxShadow="md" key={task.date}>
           <Text fontSize="xl" color="teal.600" textAlign="center" my={4} fontWeight="bold">
             Tarefas do dia {task.date}

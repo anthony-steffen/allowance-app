@@ -30,7 +30,7 @@ const TaskProvider = ({ children }) => {
 
   // Função para carregar tarefas diárias ao clicar em um botão
   const loadDailyTasks = useCallback(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('pt-BR');
     // Verifica se as tarefas já foram carregadas hoje ou se aprovação foi solicitada
     if (lastLoadDate === today) {
       toast({
@@ -72,7 +72,7 @@ const TaskProvider = ({ children }) => {
     const completed = tasks.filter(task => task.done);
     const notCompleted = tasks.filter(task => !task.done);
     const dailyReward = completed.reduce((acc, task) => acc + task.value, 0);
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('pt-BR');
 
     // Verifica se já foi solicitada a aprovação das tarefas de hoje
     if (sendToApproval.some(record => record.date === today)) {
@@ -118,7 +118,7 @@ const TaskProvider = ({ children }) => {
 
   const approveTask = useCallback(() => {
   const finalApprove = sendToApproval.slice().map(record => {
-    if (record.date === new Date().toISOString().split('T')[0]) {
+    if (record.date === new Date().toLocaleDateString('pt-BR')) {
       record.approved = true;
 
       setApproved([...approved, record]);
