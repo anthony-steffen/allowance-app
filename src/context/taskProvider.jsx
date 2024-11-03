@@ -118,7 +118,7 @@ const TaskProvider = ({ children }) => {
 
   const approveTask = useCallback(() => {
   const finalApprove = sendToApproval.slice().map(record => {
-    if (record.date === new Date().toLocaleDateString('pt-BR')) {
+    if (record.completed.length > 0) {
       record.approved = true;
 
       setApproved([...approved, record]);
