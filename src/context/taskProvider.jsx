@@ -11,26 +11,28 @@ const TaskProvider = ({ children }) => {
 
   const [tasks, setTasks] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [approvalRequested, setApprovalRequested] = useState(false);
   const [lastLoadDate, setLastLoadDate] = useState(() => {
     const savedDate = localStorage.getItem('lastLoadDate');
     return savedDate ? savedDate : [];
   });
-  const [taskHistory, setTaskHistory] = useState(() => {
-    const savedHistory = localStorage.getItem('taskHistory');
+  const [sendToApproval, setSendToApproval] = useState(() => {
+    const savedHistory = localStorage.getItem('sendToApproval');
     return savedHistory ? JSON.parse(savedHistory) : [];
   }); // Histórico de tarefas concluídas
 
+  const [approved, setApproved] = useState(() => {
+    const savedApproved = localStorage.getItem('Approved');
+    return savedApproved ? JSON.parse(savedApproved) : [];
+  }
+  );
+  
   const toast = useToast();
 
-  
   // Função para carregar tarefas diárias ao clicar em um botão
   const loadDailyTasks = useCallback(() => {
- 
     const today = new Date().toISOString().split('T')[0];
-
     // Verifica se as tarefas já foram carregadas hoje ou se aprovação foi solicitada
-    if (lastLoadDate === today || approvalRequested) {
+    if (lastLoadDate === today) {
       toast({
         title: 'Erro',
         description: 'As tarefas de hoje já foram carregadas.',
@@ -46,7 +48,7 @@ const TaskProvider = ({ children }) => {
     setLoaded(true);
     setLastLoadDate(today);
     localStorage.setItem('lastLoadDate', today);
-  }, [lastLoadDate, approvalRequested, toast]);
+  }, [lastLoadDate, toast]);
 
   
   // Função para alternar o status de conclusão de uma tarefa
@@ -65,15 +67,15 @@ const TaskProvider = ({ children }) => {
     );
   };
 
-  // Salva as tarefas concluídas no taskHistory
+  // Salva as tarefas concluídas no sendToApproval
   const recordCompletedTasks = useCallback(() => {
-    const completedTasks = tasks.filter(task => task.done);
-    const notCompletedTasks = tasks.filter(task => !task.done);
-    const dailyTotal = completedTasks.reduce((acc, task) => acc + task.value, 0);
+    const completed = tasks.filter(task => task.done);
+    const notCompleted = tasks.filter(task => !task.done);
+    const dailyReward = completed.reduce((acc, task) => acc + task.value, 0);
     const today = new Date().toISOString().split('T')[0];
 
     // Verifica se já foi solicitada a aprovação das tarefas de hoje
-    if (taskHistory.some(record => record.date === today)) {
+    if (sendToApproval.some(record => record.date === today)) {
       toast({
         title: 'Erro',
         description: 'Você já solicitou a aprovação das tarefas de hoje.',
@@ -84,21 +86,15 @@ const TaskProvider = ({ children }) => {
       });
       return;
     }
-
-    setTaskHistory(prevHistory => [
-      ...prevHistory,
+    setSendToApproval( [
       {
         date: today,
-        tasks: [{ completedTasks, notCompletedTasks }],
-        dailyTotal,
-        requestedApproval: true,
-        completedTasks,
-        notCompletedTasks,
+        dailyReward,
+        completed,
+        notCompleted,
         approved: false,
       },
     ]);
-
-    setApprovalRequested(true);
     toast({
       title: 'Sucesso!',
       description: 'Solicitação enviada para aprovação.',
@@ -109,46 +105,66 @@ const TaskProvider = ({ children }) => {
     });
     setLoaded(false);
     setTasks([]);
-  }, [tasks, taskHistory, toast]);
+  }, [tasks, sendToApproval, toast]);
 
 
   // Efeito para salvar o histórico no localStorage
   useEffect(() => {
-    localStorage.setItem('taskHistory', JSON.stringify(taskHistory));
-  }, [taskHistory]);
+    localStorage.setItem('sendToApproval', JSON.stringify(sendToApproval));
+    localStorage.setItem('Approved', JSON.stringify(approved));
+  }, [sendToApproval, approved]);
 
-  // Funções para aprovar ou rejeitar a solicitação de tarefas
-  const approveTask = (index) => {
-    setTaskHistory(prevHistory =>
-      prevHistory.map((record, i) =>
-        i === index ? { ...record, approved: true } : record
-      )
-    );
-  };
+// Função para aprovar tarefas sem alterar o histórico
 
-  const rejectTask = (index) => {
-    setTaskHistory(prevHistory =>
-      prevHistory.filter((_, i) => i !== index) // Remove o registro rejeitado
-    );
-  };
+  const approveTask = useCallback(() => {
+  const finalApprove = sendToApproval.slice().map(record => {
+    if (record.date === new Date().toISOString().split('T')[0]) {
+      record.approved = true;
 
+      setApproved([...approved, record]);
+      
+      toast({
+        title: 'Sucesso!',
+        description: 'Tarefas aprovadas.',
+        status: 'success',
+        position: 'center',
+        duration: 3000,
+        isClosable: true,
+      });
+    }else{(
+      toast({
+        title: 'Erro',
+        description: 'Não há tarefas para aprovar.',
+        status: 'error',
+        position: 'center',
+        duration: 3000,
+        isClosable: true,
+      })
+    )}
+    return record;
+  }
+  );
+  setSendToApproval(finalApprove);
+}, [sendToApproval, approved, toast]);
 
   const store = useMemo(() => ({
     tasks,
     loaded,
+    approved,
     approveTask,
-    rejectTask,
     loadDailyTasks,
     toggleTaskCompletion,
     completeAllTasks,
-    taskHistory,
+    sendToApproval,
     recordCompletedTasks,
   }), [
     tasks,
     loaded,
-    taskHistory,
+    approved,
+    sendToApproval,
     loadDailyTasks,
     recordCompletedTasks,
+    approveTask,  
   ]);
 
   return (

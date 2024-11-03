@@ -1,45 +1,81 @@
 import { useContext } from 'react';
 import TaskContext from '../context/taskContext';
-import { Text, Flex, Heading, List, ListItem, ListIcon, Container } from '@chakra-ui/react';
+import {useColorMode, Text, Flex, Heading, List, ListItem, ListIcon, Container, Button } from '@chakra-ui/react';
 import { CheckCircleIcon, CloseIcon } from '@chakra-ui/icons';
 
 const AdminDashboard = () => {
-  const { taskHistory} = useContext(TaskContext);
-
+  const {sendToApproval, approveTask, rejectTask} = useContext(TaskContext);
+  const mode = useColorMode();
 
   // achatando o array
-  const completedTasks = taskHistory.map(record => record.completedTasks).flat();
-  const notCompletedTasks = taskHistory.map(record => record.notCompletedTasks).flat();
- 
-  return (
+  const finalAprove = sendToApproval.some(record => record.approved);
+
+
+
+  return (  
     <Flex p={6} maxW="800px" mx="auto" direction="column">
       <Heading as="h1" size="lg" textAlign="center" color="teal.600">
         Painel de Administração
       </Heading>
-
-      <Text fontSize="2xl" color="teal.600" textAlign="center" my={4} fontWeight="bold">
+    
+      <Text fontSize="xl" color="teal.600" textAlign="center" my={4} fontWeight="bold">
         Histórico de Tarefas
       </Text>
 
-    <Container bg={'gray.800'} p={4} borderRadius={8} boxShadow="md" maxW="800px" mx="auto">
-      <List spacing={3} my={4}>
-        {completedTasks.map(task => (
-          <ListItem key={task.id} color="green.500" fontWeight="bold" fontSize="md">
-            <ListIcon as={CheckCircleIcon} color="green.500" />
-            {task.title}
-          </ListItem>
-        ))}
-      </List>
+      {!finalAprove && sendToApproval.map(task => (
+        <Container bg={mode.colorMode === 'dark' ? 'gray.800' : 'gray.100'} p={4} borderRadius={8} boxShadow="md" key={task.date}>
+          <Text fontSize="xl" color="teal.600" textAlign="center" my={4} fontWeight="bold">
+            Tarefas do dia {task.date}
+          </Text>
+          <Text fontSize="md" color="teal.600" textAlign="center" fontWeight="bold">
+            Valor da recompensa
+            {task.dailyReward ? `: R$ ${task.dailyReward}` : ': R$ 0,00'}
+          </Text>
+          <List spacing={3} my={4}>
+            {task.completed.map(task => (
+                <ListItem key={task.id} color={mode.colorMode === 'dark' ? 'white' : 'gray.800'} fontWeight="bold" fontSize="md">
+                  <Flex dir='row' align='center' justify='space-between'>
+                    {task.title}
+                    <ListIcon as={CheckCircleIcon} color="green.500" />
+                  </Flex>
+                </ListItem>
+              ))
+            }
+          </List>
 
-      <List spacing={3}>
-        {notCompletedTasks.map(task => (
-          <ListItem key={task.id} color="red.400" fontWeight="bold" fontSize="md">
-            <ListIcon as={CloseIcon} color="red.400" />
-            {task.title}
-          </ListItem>
-        ))}
-      </List>
-    </Container>
+          <List spacing={3} my={4}>
+            {task.notCompleted.map(task => (
+                <ListItem key={task.id} color={mode.colorMode === 'dark' ? 'white' : 'gray.800'} fontWeight="bold" fontSize="md">
+                  <Flex dir='row' align='center' justify='space-between'>
+                    {task.title}
+                    <ListIcon as={CloseIcon} color="red.400" />
+                  </Flex>
+                </ListItem>
+              ))
+            }
+          </List>
+
+          <Flex justify="space-between" align='center' my={5} flexDir={'column'} gap={4}>
+            <Button
+              maxW="200px"
+              onClick={approveTask}
+              bg={'teal.700'}
+              _hover={{ bg: 'teal.800' }}
+            >
+              Aprovar Tarefas
+            </Button>
+          
+            <Button
+              maxW="200px"
+              onClick={rejectTask}
+              bg={'red.500'}
+              _hover={{ bg: 'red.600' }}
+            >
+              Rejeitar Tarefas
+            </Button>
+          </Flex>
+        </Container>
+      ))}
 
     </Flex>
   );

@@ -4,7 +4,7 @@ import TaskContext from '../context/taskContext';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 const Home = () => {
-  const {taskHistory, tasks, loaded, loadDailyTasks, toggleTaskCompletion, completeAllTasks, recordCompletedTasks } = useContext(TaskContext);
+  const {sendToApproval, tasks, loaded, loadDailyTasks, toggleTaskCompletion, completeAllTasks, recordCompletedTasks } = useContext(TaskContext);
   const colorMode = useColorMode();
   const progress = tasks.filter(task => task.done).length / tasks.length * 100;
   const allCompleted = tasks.every(task => task.done);
@@ -18,7 +18,7 @@ const Home = () => {
       </Heading>
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
-      {taskHistory.some(record => record.date === today && record.requestedApproval) ? (
+      {sendToApproval.some(record => record.date === today && record.requestedApproval) ? (
         <Text fontSize="lg" color="teal.600" textAlign="center" mt={6}>
           Parabéns por concluir suas tarefas, nos vemos amanhã!
         </Text>
