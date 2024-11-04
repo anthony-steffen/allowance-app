@@ -3,6 +3,8 @@ import { useColorMode, Button, Card, CardBody, CardFooter, CircularProgress, Cir
 import TaskContext from '../context/taskContext';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
+import{ dailyReward }from '../shared/reward';
+
 const Home = () => {
   const {
     sendToApproval,
@@ -15,6 +17,7 @@ const Home = () => {
     recordCompletedTasks 
   } = useContext(TaskContext);
   const colorMode = useColorMode();
+
   const progress = tasks.filter(task => task.done).length / tasks.length * 100;
   const allCompleted = tasks.every(task => task.done);
 
@@ -26,7 +29,7 @@ const Home = () => {
         Minhas Tarefas Diárias
       </Heading>
       <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
-        Mesada R$ {approved.reduce((acc, record) => acc + record.dailyReward, 0).toFixed(2)}
+        Mesada R$ {dailyReward(approved)}
       </Heading>
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
