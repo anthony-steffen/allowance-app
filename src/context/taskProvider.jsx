@@ -61,11 +61,20 @@ const TaskProvider = ({ children }) => {
   };
 
   // Função para lidar com a seleção de penalidades
-  const togglePenalty = (penalty) => {
-    setSelectedPenalties((prev) =>
-      prev.includes(penalty) ? prev.filter((p) => p !== penalty) : [...prev, penalty]
-    );
-  };
+const togglePenalty = (penalty) => {
+  setSelectedPenalties((prev) => {
+    // Verifica se a penalidade já está na lista usando o id
+    const exists = prev.some((p) => p.id === penalty.id);
+
+    if (exists) {
+      // Se já existe, remove a penalidade
+      return prev.filter((p) => p.id !== penalty.id);
+    } else {
+      // Se não existe, adiciona a penalidade
+      return [...prev, penalty];
+    }
+  });
+};
 
 
 
@@ -148,40 +157,6 @@ const approveTask = useCallback(() => {
 , [sendToApproval, selectedPenalties]);
 
 
-
-//   const approveTask = useCallback(() => {
-//   const finalApprove = sendToApproval.slice().map(record => {
-//     if (record.completed.length > 0) {
-//       record.approved = true
-
-//       setApproved((prevApproved) => [
-//         ...prevApproved,
-//       ]);
-      
-//       toast({
-//         title: 'Sucesso!',
-//         description: 'Tarefas aprovadas.',
-//         status: 'success',
-//         position: 'center',
-//         duration: 3000,
-//         isClosable: true,
-//       });
-//     }else{(
-//       toast({
-//         title: 'Erro',
-//         description: 'Não há tarefas para aprovar.',
-//         status: 'error',
-//         position: 'center',
-//         duration: 3000,
-//         isClosable: true,
-//       })
-//     )}
-//     return record;
-//   }
-//   );
-//   setSendToApproval(finalApprove);
-// }, [sendToApproval, toast]);
-
   const store = useMemo(() => ({
     tasks,
     loaded,
@@ -193,6 +168,7 @@ const approveTask = useCallback(() => {
     completeAllTasks,
     sendToApproval,
     recordCompletedTasks,
+    selectedPenalties,
   }), [
     tasks,
     loaded,
@@ -200,7 +176,8 @@ const approveTask = useCallback(() => {
     sendToApproval,
     loadDailyTasks,
     recordCompletedTasks,
-    approveTask,  
+    approveTask,
+    selectedPenalties,  
   ]);
 
   return (

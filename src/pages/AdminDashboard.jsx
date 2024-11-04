@@ -94,7 +94,7 @@ const AdminDashboard = () => {
                   fontSize="md"
                 >
                   <Flex dir="row" align="center" justify="space-between">
-                    {task.title}
+                    <Text>{task.title}</Text>
                     <ListIcon as={CloseIcon} color="red.400" />
                   </Flex>
                 </ListItem>
