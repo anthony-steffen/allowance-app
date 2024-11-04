@@ -4,7 +4,16 @@ import TaskContext from '../context/taskContext';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 const Home = () => {
-  const {sendToApproval, tasks, loaded, loadDailyTasks, toggleTaskCompletion, completeAllTasks, recordCompletedTasks } = useContext(TaskContext);
+  const {
+    sendToApproval,
+    approved,
+    tasks, 
+    loaded, 
+    loadDailyTasks,
+    toggleTaskCompletion, 
+    completeAllTasks, 
+    recordCompletedTasks 
+  } = useContext(TaskContext);
   const colorMode = useColorMode();
   const progress = tasks.filter(task => task.done).length / tasks.length * 100;
   const allCompleted = tasks.every(task => task.done);
@@ -16,6 +25,9 @@ const Home = () => {
       <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
         Minhas Tarefas Diárias
       </Heading>
+      <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
+        Mesada R$ {approved.reduce((acc, record) => acc + record.dailyReward, 0).toFixed(2)}
+      </Heading>
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
       {sendToApproval.some(record => record.date === today) ? (
@@ -25,6 +37,10 @@ const Home = () => {
       ) : (
         <>
           <Flex
+            bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.100'} 
+            p={4} 
+            borderRadius={10} 
+            boxShadow="md" 
             justifyContent="space-between"
             alignItems="center"
             mb={4}
@@ -46,7 +62,7 @@ const Home = () => {
             </CircularProgress>
 
             <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
-              {`Recompensa: ${tasks.reduce((acc, task) => acc + (task.done ? task.value : 0), 0).toFixed(2)}`}
+              {`Recompensa/Diária: ${tasks.reduce((acc, task) => acc + (task.done ? task.value : 0), 0).toFixed(2)}`}
             </Text>
 
             <Button maxW="160px" onClick={recordCompletedTasks}>
@@ -70,7 +86,13 @@ const Home = () => {
           </Flex>
 
           {tasks.map(task => (
-            <Card key={task.id} mb={4}>
+            <Card 
+            key={task.id} 
+            mb={4} 
+            bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.100'} 
+            boxShadow="md"
+            borderRadius={10} 
+            >
               <CardBody>
                 <Stack spacing={3}>
                   <Heading as="h2" size="md">{task.title}</Heading>
