@@ -23,8 +23,8 @@ const TaskProvider = ({ children }) => {
   const [approved, setApproved] = useState(() => {
     const savedApproved = localStorage.getItem('Approved');
     return savedApproved ? JSON.parse(savedApproved) : [];
-  }
-  );
+  });
+  const [selectedPenalties, setSelectedPenalties] = useState([]);
   
   const toast = useToast();
 
@@ -60,6 +60,15 @@ const TaskProvider = ({ children }) => {
     );
   };
 
+  // Função para lidar com a seleção de penalidades
+  const togglePenalty = (penalty) => {
+    setSelectedPenalties((prev) =>
+      prev.includes(penalty) ? prev.filter((p) => p !== penalty) : [...prev, penalty]
+    );
+  };
+
+
+
   // Função para concluir todas as tarefas
   const completeAllTasks = () => {
     setTasks(prevTasks =>
@@ -86,15 +95,17 @@ const TaskProvider = ({ children }) => {
       });
       return;
     }
-    setSendToApproval( [
-      {
-        date: today,
-        dailyReward,
-        completed,
-        notCompleted,
-        approved: false,
-      },
-    ]);
+
+    const newApproval = {
+      date: today,
+      dailyReward,
+      completed,
+      notCompleted,
+      approved: false,
+    };
+    setSendToApproval(prev => [...prev, newApproval]);
+    setSelectedPenalties([]); // Limpa as penalidades selecionadas
+
     toast({
       title: 'Sucesso!',
       description: 'Solicitação enviada para aprovação.',
@@ -115,37 +126,61 @@ const TaskProvider = ({ children }) => {
   }, [sendToApproval, approved]);
 
 // Função para aprovar tarefas sem alterar o histórico
+const approveTask = useCallback(() => {
+  setSendToApproval((prevApproval) =>
+    prevApproval.map((record) => {
+      if (record.completed.length > 0) {
+        return { ...record, approved: true };
+      }
+      return record;
+    }
+  ));
+  const approvedTasks = sendToApproval.map((task) => ({
+    ...task,
+    penalties: selectedPenalties,
+    approved: true,
+  }));
+  setApproved(approvedTasks);
+  localStorage.setItem('Approved', JSON.stringify(approvedTasks));
+  setSelectedPenalties([]);
+  alert('Tarefas aprovadas com penalidades aplicadas!');
+}
+, [sendToApproval, selectedPenalties]);
 
-  const approveTask = useCallback(() => {
-  const finalApprove = sendToApproval.slice().map(record => {
-    if (record.completed.length > 0) {
-      record.approved = true;
 
-      setApproved([...approved, record]);
+
+//   const approveTask = useCallback(() => {
+//   const finalApprove = sendToApproval.slice().map(record => {
+//     if (record.completed.length > 0) {
+//       record.approved = true
+
+//       setApproved((prevApproved) => [
+//         ...prevApproved,
+//       ]);
       
-      toast({
-        title: 'Sucesso!',
-        description: 'Tarefas aprovadas.',
-        status: 'success',
-        position: 'center',
-        duration: 3000,
-        isClosable: true,
-      });
-    }else{(
-      toast({
-        title: 'Erro',
-        description: 'Não há tarefas para aprovar.',
-        status: 'error',
-        position: 'center',
-        duration: 3000,
-        isClosable: true,
-      })
-    )}
-    return record;
-  }
-  );
-  setSendToApproval(finalApprove);
-}, [sendToApproval, approved, toast]);
+//       toast({
+//         title: 'Sucesso!',
+//         description: 'Tarefas aprovadas.',
+//         status: 'success',
+//         position: 'center',
+//         duration: 3000,
+//         isClosable: true,
+//       });
+//     }else{(
+//       toast({
+//         title: 'Erro',
+//         description: 'Não há tarefas para aprovar.',
+//         status: 'error',
+//         position: 'center',
+//         duration: 3000,
+//         isClosable: true,
+//       })
+//     )}
+//     return record;
+//   }
+//   );
+//   setSendToApproval(finalApprove);
+// }, [sendToApproval, toast]);
 
   const store = useMemo(() => ({
     tasks,
@@ -154,6 +189,7 @@ const TaskProvider = ({ children }) => {
     approveTask,
     loadDailyTasks,
     toggleTaskCompletion,
+    togglePenalty,
     completeAllTasks,
     sendToApproval,
     recordCompletedTasks,
