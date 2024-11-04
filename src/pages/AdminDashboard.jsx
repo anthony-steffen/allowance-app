@@ -64,7 +64,7 @@ const AdminDashboard = () => {
 							textAlign="center"
 							fontWeight="bold">
 							Valor da recompensa
-							{task.dailyReward ? `: R$ ${task.dailyReward}` : ": R$ 0,00"}
+							{task.dailyReward ? `: R$ ${task.dailyReward.toFixed(2)}` : ": R$ 0,00"}
 						</Text>
 						<List spacing={1} my={1}>
 							{task.completed.map((task) => (
