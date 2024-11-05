@@ -102,7 +102,11 @@ const Home = () => {
               {`Recompensa/Diária: ${tasks.reduce((acc, task) => acc + (task.done ? task.value : 0), 0).toFixed(2)}`}
             </Text>
 
-            <Button maxW="160px" onClick={recordCompletedTasks}>
+            <Button
+            disabled={!loaded || tasks.length === 0} 
+            maxW="160px" 
+            onClick={recordCompletedTasks}
+            >
               Solicitar Aprovação
             </Button>
 
