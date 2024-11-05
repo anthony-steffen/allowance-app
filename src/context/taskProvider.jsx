@@ -152,9 +152,27 @@ const approveTask = useCallback(() => {
   setApproved(approvedTasks);
   localStorage.setItem('Approved', JSON.stringify(approvedTasks));
   setSelectedPenalties([]);
-  alert('Tarefas aprovadas com penalidades aplicadas!');
+  if (selectedPenalties.length > 0) {
+    toast({
+      title: 'Sucesso!',
+      description: 'Tarefas aprovadas com penalidades!',
+      status: 'warning',
+      position: 'center',
+      duration: 4000,
+      isClosable: true,
+    });
+  } else {
+    toast({
+      title: 'Sucesso!',
+      description: 'Tarefas aprovadas sem penalidades!',
+      status: 'success',
+      position: 'center',
+      duration: 3000,
+      isClosable: true,
+    });
+  }
 }
-, [sendToApproval, selectedPenalties]);
+, [sendToApproval, selectedPenalties , toast]);
 
 
   const store = useMemo(() => ({
