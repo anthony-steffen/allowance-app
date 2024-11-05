@@ -12,12 +12,16 @@ import {
   Text,
   useToast,
   Box,
-  Flex
+  Flex,
+  InputRightElement,
+  InputGroup
 } from '@chakra-ui/react'
+
+import {ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
 
 //Imports AuthContext
 import AuthContext from '../context/authContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 //Imports react-router-dom to navigate between pages
 import { useNavigate,Link } from 'react-router-dom';
@@ -25,22 +29,25 @@ import { useNavigate,Link } from 'react-router-dom';
 //Import Crypto function to decrypt the user's data
 import { decrypt } from '../shared/crypto';
 
+
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const { login } = useContext(AuthContext);
-
+  const [show, setShow] = useState(false)
+  
   
   //Instance of useNavigate and useToast to send messages management
   const navigate = useNavigate();
   const toast = useToast();
-  
+
+  const handleClick = () => setShow(!show);
   
   const onSubmit = data => {
-
+    
     //Get user data from localStorage if it exists
     const findUser = localStorage.getItem('user');
     const users = findUser ? decrypt(findUser) : null;
-
+    
     if (users && data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
       login(data);
       reset();
@@ -95,7 +102,9 @@ const Login = () => {
 
         <FormControl imb={1} isRequired isInvalid={errors.Password}>
           <FormLabel ms={2} mb={0}>Password</FormLabel>
+          <InputGroup size='md'>
           <Input
+          type={show ? 'text' : 'password'}
           placeholder='Password'
           {...register('password', { 
             required: 'A senha é obrigatória',
@@ -108,6 +117,13 @@ const Login = () => {
           })}
           />
           {errors.password && <Text color={'red.400'} size={'sm'}>{errors.password.message}</Text>}
+          <InputRightElement width='4.5rem'>
+            {show ? 
+            <ViewOffIcon h={5} w={5} onClick={handleClick}/> 
+            : 
+            <ViewIcon h={5} w={5} onClick={handleClick} />}
+          </InputRightElement>
+          </InputGroup>
         </FormControl>
 
         <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>

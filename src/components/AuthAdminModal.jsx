@@ -1,4 +1,5 @@
 import {
+  useColorMode,
   Button,
   Modal,
   ModalOverlay,
@@ -11,8 +12,11 @@ import {
   FormControl,
   FormLabel,
   useDisclosure,
-
+  InputGroup,
+  InputRightElement
 } from '@chakra-ui/react';
+
+import {ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
 
 import { useNavigate } from 'react-router-dom';
 import {useState } from 'react';
@@ -20,13 +24,13 @@ import {useState } from 'react';
 const AuthAdminModal = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const navigate = useNavigate();
+  const colorMode = useColorMode();
 
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
 
-  console.log(user, password);
-
-  const navigate = useNavigate();
 
   const handleAdminLogin = (event) => {
    event.preventDefault();
@@ -37,15 +41,26 @@ const AuthAdminModal = () => {
       navigate('/admin');
   };
 
+  const handleClick = () => setShow(!show);
+
   return (
     <>
-      <Button onClick={onOpen} w={'50%'}>Login Administrador</Button>
+      <Button
+      type='button'
+      onClick={onOpen} 
+      w={'50%'}
+      >Login Administrador</Button>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent
+        w={{ base: '90%', md: '50%' }}
+        color={ colorMode.colorMode === 'dark' ? 'white' : 'white' }
+        bg={ colorMode.colorMode === 'dark' ? 'gray.800' : 'gray.800'        
+        }
+        >
           <ModalHeader textAlign='center'>
             Login to AdminDashboard
           </ModalHeader>
@@ -64,16 +79,26 @@ const AuthAdminModal = () => {
 
             <FormControl mt={4} isRequired>
               <FormLabel mb={1}>Password</FormLabel>
-              <Input 
+              <InputGroup size='md'>
+              <Input
+              type={show ? 'text' : 'password'}
               placeholder='Password'
               onChange={e => setPassword(e.target.value)}
               />
+              <InputRightElement width='4.5rem'>
+                {show ? 
+                <ViewOffIcon h={5} w={5} onClick={handleClick}/> 
+                : 
+                <ViewIcon h={5} w={5} onClick={handleClick} />}
+              </InputRightElement>
+              </InputGroup>
             </FormControl>
 
           </ModalBody>
 
           <ModalFooter justifyContent='center'>
             <Button
+            type='button'
             mb={4}
             w={'50%'}
             onClick={handleAdminLogin}

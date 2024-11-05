@@ -61,7 +61,8 @@ const AdminDashboard = () => {
               Tarefas do dia {task.date}
             </Text>
             <Text
-              fontSize="md"
+              my={2}
+              fontSize="xl"
               color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
               textAlign="center"
               fontWeight="bold"
@@ -106,7 +107,7 @@ const AdminDashboard = () => {
             <Flex
               justify="space-around"
               align="center"
-              mt={4}
+              my={4}
               flexDir={{ base: "column", md: "row" }}
               gap={2}
             >
