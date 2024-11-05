@@ -17,6 +17,7 @@ import TaskContext from '../context/taskContext';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
 import{ dailyReward }from '../shared/reward';
+import AuthAdminModal from '../components/AuthAdminModal';
 
 const Home = () => {
   const {
@@ -49,9 +50,14 @@ const Home = () => {
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
       {sendToApproval.some(record => record.date === today) ? (
+      <Flex p={3} maxW="800px" mx="auto" direction="column" alignItems="center" gap={4}>
         <Text fontSize="lg" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'} textAlign="center">
           Parabéns por concluir suas tarefas, nos vemos amanhã!
         </Text>
+
+       <AuthAdminModal />
+       </Flex>
+
       ) : (
         <>
           <Flex

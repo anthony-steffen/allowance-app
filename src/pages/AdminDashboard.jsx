@@ -23,6 +23,7 @@ const AdminDashboard = () => {
   return (
     <Flex p={3} maxW="800px" mx="auto" direction="column">
       <Heading
+        my={3}
         as="h1"
         size="lg"
         textAlign="center"
@@ -31,7 +32,7 @@ const AdminDashboard = () => {
         Painel de Administração
       </Heading>
 
-      <Text
+      {/* <Text
         fontSize="xl"
         color={mode.colorMode === "dark" ? "teal.300" : "teal.600"}
         textAlign="center"
@@ -39,7 +40,7 @@ const AdminDashboard = () => {
         fontWeight="bold"
       >
         Histórico de Tarefas
-      </Text>
+      </Text> */}
 
       {!finalApprove &&
         sendToApproval.map((task) => (

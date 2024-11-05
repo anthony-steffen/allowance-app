@@ -19,7 +19,7 @@ const BlackList = () => {
     >
       <Text
         fontSize="xl"
-        color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
+        color={mode.colorMode === "dark" ? "red.400" : "red.400"}
         textAlign="center"
         fontWeight="bold"
         mb={2}
@@ -38,7 +38,7 @@ const BlackList = () => {
             justify="space-around" 
             align="center" 
             border={'1px solid'} 
-            borderColor={'gray.600'} 
+            borderColor={mode.colorMode === 'dark' ? 'gray.600' : 'gray.300'}
             borderRadius={8} 
             >
               
@@ -58,7 +58,7 @@ const BlackList = () => {
                 <AddIcon
                   onClick={() => togglePenalty(penalty)}
                   cursor="pointer"
-                  color="green.400"
+                  color="red.400"
                 />
               )}
             </Flex>
