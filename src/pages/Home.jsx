@@ -1,5 +1,18 @@
 import { useContext } from 'react';
-import { useColorMode, Button, Card, CardBody, CardFooter, CircularProgress, CircularProgressLabel, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { 
+  useColorMode, 
+  Button, 
+  Card, 
+  CardBody, 
+  CardFooter, 
+  CircularProgress, 
+  CircularProgressLabel,
+  Flex, 
+  Heading, 
+  Stack, 
+  Text 
+} from '@chakra-ui/react';
+
 import TaskContext from '../context/taskContext';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 
@@ -22,25 +35,27 @@ const Home = () => {
   const allCompleted = tasks.every(task => task.done);
 
   const today = new Date().toLocaleDateString('pt-BR');
+  const mode = useColorMode();
 
   return (
     <Flex p={6} maxW="800px" mx="auto" direction="column">
-      <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
+
+      <Heading as="h1" size="lg" mb={4} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
         Minhas Tarefas Diárias
       </Heading>
-      <Heading as="h1" size="lg" mb={4} textAlign="center" color="teal.600">
+      <Heading as="h1" size="lg" mb={4} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
         Mesada R$ {dailyReward(approved)}
       </Heading>
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
       {sendToApproval.some(record => record.date === today) ? (
-        <Text fontSize="lg" color="teal.600" textAlign="center" mt={6}>
+        <Text fontSize="lg" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'} textAlign="center">
           Parabéns por concluir suas tarefas, nos vemos amanhã!
         </Text>
       ) : (
         <>
           <Flex
-            bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.100'} 
+            // bg={colorMode.colorMode === 'dark' ? 'none' : 'gray.200'} 
             p={4} 
             borderRadius={10} 
             boxShadow="md" 
@@ -92,7 +107,7 @@ const Home = () => {
             <Card 
             key={task.id} 
             mb={4} 
-            bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.100'} 
+            bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.200'} 
             boxShadow="md"
             borderRadius={10} 
             >
@@ -105,7 +120,6 @@ const Home = () => {
                   </Text>
                 </Stack>
               </CardBody>
-              <Divider />
               <CardFooter justifyContent="space-between" alignItems="center" p={3}>
                 {task.done ? (
                   <Flex alignItems="center" justifyContent="center" direction="column" gap={2}>

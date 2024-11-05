@@ -26,14 +26,14 @@ const AdminDashboard = () => {
         as="h1"
         size="lg"
         textAlign="center"
-        color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
+        color={mode.colorMode === "dark" ? "teal.300" : "teal.600"}
       >
         Painel de Administração
       </Heading>
 
       <Text
         fontSize="xl"
-        color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
+        color={mode.colorMode === "dark" ? "teal.300" : "teal.600"}
         textAlign="center"
         mb={2}
         fontWeight="bold"
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
       {!finalApprove &&
         sendToApproval.map((task) => (
           <Container
-            bg={mode.colorMode === "dark" ? "gray.700" : "gray.100"}
+            bg={mode.colorMode === "dark" ? "gray.700" : "gray.200"}
             p={4}
             borderRadius={8}
             boxShadow="md"
