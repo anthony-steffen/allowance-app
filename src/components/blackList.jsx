@@ -11,9 +11,10 @@ const BlackList = () => {
   return (
     <Container
       bg={mode.colorMode === "dark" ? "gray.700" : "gray.200"}
-      p={2}
+      p={3}
       my={2}
-      borderRadius={8}
+      borderRadius={10}
+      border={ mode.colorMode === 'dark' ? '1px solid #343e4b' : '1px solid #cbd5e0' } 
       boxShadow="md"
     >
       <Text

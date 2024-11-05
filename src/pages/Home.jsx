@@ -38,12 +38,12 @@ const Home = () => {
   const mode = useColorMode();
 
   return (
-    <Flex p={6} maxW="800px" mx="auto" direction="column">
+    <Flex p={3} maxW="800px" mx="auto" direction="column">
 
-      <Heading as="h1" size="lg" mb={4} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
+      <Heading as="h1" size="lg" mb={2} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
         Minhas Tarefas Diárias
       </Heading>
-      <Heading as="h1" size="lg" mb={4} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
+      <Heading as="h1" size="lg" mb={3} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
         Mesada R$ {dailyReward(approved)}
       </Heading>
 
@@ -55,9 +55,10 @@ const Home = () => {
       ) : (
         <>
           <Flex
-            // bg={colorMode.colorMode === 'dark' ? 'none' : 'gray.200'} 
+            bg={colorMode.colorMode === 'dark' ? 'none' : 'gray.200'} 
             p={4} 
             borderRadius={10} 
+            border={ colorMode.colorMode === 'dark' ? '1px solid #343e4b' : '1px solid #cbd5e0' }
             boxShadow="md" 
             justifyContent="space-between"
             alignItems="center"
@@ -109,7 +110,8 @@ const Home = () => {
             mb={4} 
             bg={colorMode.colorMode === 'dark' ? 'gray.700' : 'gray.200'} 
             boxShadow="md"
-            borderRadius={10} 
+            borderRadius={10}
+            border={ colorMode.colorMode === 'dark' ? '1px solid #343e4b' : '1px solid #cbd5e0' } 
             >
               <CardBody>
                 <Stack spacing={3}>

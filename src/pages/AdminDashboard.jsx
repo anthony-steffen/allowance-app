@@ -21,7 +21,7 @@ const AdminDashboard = () => {
   const finalApprove = sendToApproval.some((record) => record.approved);
 
   return (
-    <Flex p={6} maxW="800px" mx="auto" direction="column">
+    <Flex p={3} maxW="800px" mx="auto" direction="column">
       <Heading
         as="h1"
         size="lg"
@@ -45,8 +45,9 @@ const AdminDashboard = () => {
         sendToApproval.map((task) => (
           <Container
             bg={mode.colorMode === "dark" ? "gray.700" : "gray.200"}
-            p={4}
-            borderRadius={8}
+            p={3}
+            borderRadius={10}
+            border={ mode.colorMode === 'dark' ? '1px solid #343e4b' : '1px solid #cbd5e0' } 
             boxShadow="md"
             key={task.date}
           >
