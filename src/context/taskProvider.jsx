@@ -73,6 +73,7 @@ const TaskProvider = ({ children }) => {
     const dailyReward = completed.reduce((acc, task) => acc + task.value, 0);
     const today = new Date().toLocaleDateString('pt-BR');
 
+    // Verifica se já foi solicitada a aprovação das tarefas de hoje
     if (sendToApproval.some(record => record.date === today)) {
       toast({
         title: 'Erro',
@@ -108,8 +109,8 @@ const TaskProvider = ({ children }) => {
 
   const approveTask = useCallback(() => {
     setSendToApproval((prevApproval) =>
-      prevApproval.map((record) => record.completed.length > 0 ? { ...record, approved: true } : record)
-    );
+      prevApproval.map((record) => ({ ...record, approved: true }))
+  );
     const approvedTasks = sendToApproval.map((task) => ({
       ...task,
       penalties: selectedPenalties,
