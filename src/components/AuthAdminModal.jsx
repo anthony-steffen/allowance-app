@@ -48,7 +48,7 @@ const AuthAdminModal = () => {
       <Button
       type='button'
       onClick={onOpen} 
-      w={'50%'}
+      w={'60%'}
       >Login Administrador</Button>
       <Modal
         isOpen={isOpen}
@@ -69,6 +69,7 @@ const AuthAdminModal = () => {
             <FormControl my={4} isRequired>
               <FormLabel mb={1}>User</FormLabel>
               <Input
+                variant='flushed'
                 mb={1}
                 type="text"
                 value={user}
@@ -81,8 +82,9 @@ const AuthAdminModal = () => {
               <FormLabel mb={1}>Password</FormLabel>
               <InputGroup size='md'>
               <Input
+              variant='flushed'
               type={show ? 'text' : 'password'}
-              placeholder='Password'
+              placeholder='Digite sua Senha'
               onChange={e => setPassword(e.target.value)}
               />
               <InputRightElement width='4.5rem'>

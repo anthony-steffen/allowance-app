@@ -32,16 +32,6 @@ const AdminDashboard = () => {
         Painel de Administração
       </Heading>
 
-      {/* <Text
-        fontSize="xl"
-        color={mode.colorMode === "dark" ? "teal.300" : "teal.600"}
-        textAlign="center"
-        mb={2}
-        fontWeight="bold"
-      >
-        Histórico de Tarefas
-      </Text> */}
-
       {!finalApprove &&
         sendToApproval.map((task) => (
           <Container

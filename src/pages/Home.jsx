@@ -39,7 +39,12 @@ const Home = () => {
   const mode = useColorMode();
 
   return (
-    <Flex p={3} maxW="800px" mx="auto" direction="column">
+    <Flex 
+    p={3} 
+    maxW="800px" 
+    mx="auto" 
+    direction="column"
+    >
 
       <Heading as="h1" size="lg" mb={2} textAlign="center" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'}>
         Minhas Tarefas Diárias
@@ -50,9 +55,16 @@ const Home = () => {
 
       {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
       {sendToApproval.some(record => record.date === today) ? (
-      <Flex p={3} maxW="800px" mx="auto" direction="column" alignItems="center" gap={4}>
+      <Flex 
+      p={3} 
+      maxW="800px" 
+      mx="auto" 
+      direction="column" 
+      alignItems="center" 
+      gap={4}
+      >
         <Text fontSize="lg" color={mode.colorMode === 'dark' ? 'teal.300' : 'teal.600'} textAlign="center">
-          Parabéns por concluir suas tarefas, nos vemos amanhã!
+          Parabéns por concluir suas tarefas. <br></br>Volte amanhã!
         </Text>
 
        <AuthAdminModal />
