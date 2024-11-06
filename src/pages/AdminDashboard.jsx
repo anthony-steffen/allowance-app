@@ -12,7 +12,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
-import BlackList from "../components/blackList";
+import BlackList from "../components/BlackList";
 
 const AdminDashboard = () => {
   const { sendToApproval, approveTask } = useContext(TaskContext);

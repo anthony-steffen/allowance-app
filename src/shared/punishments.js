@@ -1,5 +1,5 @@
 
-export const penalities = [
+export const punishments = [
   {
     id: 1,
     title: 'Comer no computador/Tv/Celular',

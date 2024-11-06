@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import TaskContext from "../context/taskContext";
-import { penalities } from "../shared/penalties";
+import { punishments } from "../shared/punishments";
 import { useColorMode, Text, Container, Stack, Flex, VStack} from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 
@@ -28,7 +28,7 @@ const BlackList = () => {
       </Text>
 
       <Stack spacing={1} direction="column">
-        {penalities.map((penalty) => {
+        {punishments.map((penalty) => {
           const isSelected = selectedPenalties.includes(penalty);
 
           return (
