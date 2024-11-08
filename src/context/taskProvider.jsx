@@ -120,7 +120,7 @@ const TaskProvider = ({ children }) => {
     localStorage.setItem('Approved', JSON.stringify(approvedTasks));
     setSelectedPenalties([]);
     toast({
-      title: 'Sucesso!',
+      title: 'Sucesso, Volte para página principal!',
       description: selectedPenalties.length > 0
         ? 'Tarefas aprovadas com penalidades!'
         : 'Tarefas aprovadas sem penalidades!',

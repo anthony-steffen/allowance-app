@@ -10,13 +10,16 @@ import {
   ListIcon,
   Container,
   Button,
+  VStack,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const { sendToApproval, approveTask } = useContext(TaskContext);
   const mode = useColorMode();
+  const navigate = useNavigate();
 
   const finalApprove = sendToApproval.some((record) => record.approved);
 
@@ -112,9 +115,27 @@ const AdminDashboard = () => {
             </Flex>
           </Container>
         ))}
-      {!finalApprove && <BlackList />}
+      {!finalApprove ? (
+      <Flex justify="center" align="center" my={4}>
+      <BlackList />
+      </Flex>
+      ):(
+        <VStack justify="center" align="center" my={4}>
+          <Text align={"center"} fontSize="md" color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}>
+            Não há tarefas para aprovar.<br></br> Volte amanhã!
+          </Text>
+        <Button 
+        onClick={() => navigate('/home')} 
+        mx = "auto"
+        width={{ base: '50%', md: '20%' }}
+        _hover={{ bg: 'teal.800' }}
+        >
+          Go Back!
+        </Button>
+        </VStack>
+      )}
     </Flex>
   );
-};
+}
 
 export default AdminDashboard;
