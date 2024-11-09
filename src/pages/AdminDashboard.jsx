@@ -7,9 +7,8 @@ import {
   Heading,
   List,
   ListItem,
-  ListIcon,
-  Container,
   Button,
+  Container,
   VStack,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
@@ -17,7 +16,7 @@ import BlackList from "../components/BlackList";
 import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
-  const { sendToApproval, approveTask } = useContext(TaskContext);
+  const { sendToApproval, approveTask, toggleTaskStatus } = useContext(TaskContext);
   const mode = useColorMode();
   const navigate = useNavigate();
 
@@ -41,7 +40,7 @@ const AdminDashboard = () => {
             bg={mode.colorMode === "dark" ? "gray.700" : "gray.200"}
             p={3}
             borderRadius={10}
-            border={ mode.colorMode === 'dark' ? '1px solid #343e4b' : '1px solid #cbd5e0' } 
+            border={mode.colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"}
             boxShadow="md"
             key={task.date}
           >
@@ -61,49 +60,66 @@ const AdminDashboard = () => {
               fontWeight="bold"
             >
               Valor da recompensa
-              {task.dailyReward
-                ? `: R$ ${task.dailyReward.toFixed(2)}`
-                : ": R$ 0,00"}
+              {task.dailyReward ? `: R$ ${task.dailyReward.toFixed(2)}` : ": R$ 0,00"}
             </Text>
+
+            {/* Tarefas Completas */}
             <List spacing={1} my={1}>
-              {task.completed.map((task) => (
+              {task.completed.map((taskItem) => (
                 <ListItem
-                  key={task.id}
+                  key={taskItem.id}
                   color={mode.colorMode === "dark" ? "white" : "gray.800"}
                   fontWeight="bold"
-                  fontSize="md"
+                  fontSize="sm"
                 >
                   <Flex dir="row" align="center" justify="space-between">
-                    <Text>{task.title}</Text>
-                    <ListIcon as={CheckCircleIcon} color="green.500" />
+                    <Text>{taskItem.title}</Text>
+                    <Button
+                      width={10}
+                      size="sm"
+                      onClick={() => toggleTaskStatus(task.date, taskItem.id,)}
+                      variant="ghost"
+                    >
+                      {taskItem.done ? (
+                        <CheckCircleIcon color="green.500" />
+                      ) : (
+                        <CloseIcon color="red.400" />
+                      )}
+                    </Button>
                   </Flex>
                 </ListItem>
               ))}
             </List>
 
+            {/* Tarefas Não Completas */}
             <List spacing={1}>
-              {task.notCompleted.map((task) => (
+              {task.notCompleted.map((taskItem) => (
                 <ListItem
-                  key={task.id}
+                  key={taskItem.id}
                   color={mode.colorMode === "dark" ? "white" : "gray.800"}
                   fontWeight="bold"
                   fontSize="md"
                 >
                   <Flex dir="row" align="center" justify="space-between">
-                    <Text>{task.title}</Text>
-                    <ListIcon as={CloseIcon} color="red.400" />
+                    <Text>{taskItem.title}</Text>
+                    <Button
+                      width={10}
+                      size="sm"
+                      onClick={() => toggleTaskStatus(task.date, taskItem.id)}
+                      variant="ghost"
+                    >
+                      {taskItem.done ? (
+                        <CheckCircleIcon color="green.500" />
+                      ) : (
+                        <CloseIcon color="red.400" />
+                      )}
+                    </Button>
                   </Flex>
                 </ListItem>
               ))}
             </List>
 
-            <Flex
-              justify="space-around"
-              align="center"
-              my={4}
-              flexDir={{ base: "column", md: "row" }}
-              gap={2}
-            >
+            <Flex justify="space-around" align="center" my={4} flexDir={{ base: "column", md: "row" }} gap={2}>
               <Button
                 maxW="150px"
                 onClick={approveTask}
@@ -116,26 +132,26 @@ const AdminDashboard = () => {
           </Container>
         ))}
       {!finalApprove ? (
-      <Flex justify="center" align="center" my={4}>
-      <BlackList />
-      </Flex>
-      ):(
+        <Flex justify="center" align="center" my={4}>
+          <BlackList />
+        </Flex>
+      ) : (
         <VStack justify="center" align="center" my={4}>
           <Text align={"center"} fontSize="md" color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}>
             Não há tarefas para aprovar.<br></br> Volte amanhã!
           </Text>
-        <Button 
-        onClick={() => navigate('/home')} 
-        mx = "auto"
-        width={{ base: '50%', md: '20%' }}
-        _hover={{ bg: 'teal.800' }}
-        >
-          Go Back!
-        </Button>
+          <Button 
+            onClick={() => navigate('/home')} 
+            mx="auto"
+            width={{ base: '50%', md: '20%' }}
+            _hover={{ bg: 'teal.800' }}
+          >
+            Go Back!
+          </Button>
         </VStack>
       )}
     </Flex>
   );
-}
+};
 
 export default AdminDashboard;
