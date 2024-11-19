@@ -2,12 +2,15 @@ import {useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import AuthContext from './authContext';
 import { encrypt, decrypt } from '../shared/crypto';
+import axios from 'axios';
 
 // Criando o provedor de autenticação
 const { Provider } = AuthContext;
 
 
 const AuthProvider = ({ children }) => {
+
+  // Estado para armazenar o usuário autenticado
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -21,6 +24,18 @@ const AuthProvider = ({ children }) => {
     }
     return null; // Retorne null se não houver usuário armazenado
   });
+
+  // Função para registrar usuário
+  const registerUser = async (userData) => {
+    try {
+      const response = await axios.post('http://localhost:3000/auth/register', userData);
+      setUser(response.data.user); // Opcional: atualizar o estado do usuário após registro
+      return { success: true, message: "Usuário cadastrado com sucesso" };
+    } catch (error) {
+      return { success: false, message: error.response.data.message || "Erro no registro" };
+    }
+  };
+
 
   const login = (data) => {
     setUser(data);
@@ -47,7 +62,7 @@ const AuthProvider = ({ children }) => {
 }, []);
 
   // useMemo para memoizar o valor do contexto, evitando recriações desnecessárias
-  const store = useMemo(() => ({ user, setUser, login, logout }), [user]);
+  const store = useMemo(() => ({ user, setUser, registerUser, login, logout }), [user]);
 
   return (
     <Provider value={store}>

@@ -34,25 +34,43 @@ const Register = () => {
 		watch,
 		reset,
 	} = useForm();
-	const { login } = useContext(AuthContext);
+	const { registerUser } = useContext(AuthContext);
 	const password = watch("password");
 	const toast = useToast();
 	const [show, setShow] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-	const onSubmit = (data) => {
-		login(data);
-		reset();
-		toast({
-			title: "Usuário cadastrado com sucesso",
-			description: "Você será redirecionado para a página de Login",
-			status: "success",
-			duration: 5000,
-			isClosable: true,
-		});
-		setTimeout(() => {
-			navigate("/login");
-		}, 5000);
+	const onSubmit = async (data) => {
+		const userData = {
+			userName: data.name, // Mapeia 'name' para 'userName' para o back-end
+			email: data.email,
+			password: data.password,
+			type: "user", // Defina o tipo de usuário ou torne-o dinâmico, se necessário
+		};
+	
+		const result = await registerUser(userData);
+	
+		if (result.success) {
+			reset();
+			toast({
+				title: result.message,
+				description: "Você será redirecionado para a página de Login",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			});
+			setTimeout(() => {
+				navigate("/login");
+			}, 5000);
+		} else {
+			toast({
+				title: "Erro no registro",
+				description: result.message,
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+		}
 	};
 
 	const handleClick = () => setShow(!show);
