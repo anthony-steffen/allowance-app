@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 // Secret key for JWT
-const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 // Registrar novo usuário
 const registerUser = async (req, res) => {
