@@ -15,9 +15,9 @@ app.use('/tasks', taskRoutes); // Middleware to use taskRoutes
 
 
 // Route Test - GET
-// app.get('/', (_req, res) => {
-//   res.send('Hello World!');
-// });
+app.get('/', (_req, res) => {
+  res.send('Allowance API is working!');
+});
 
 
 module.exports = app;
