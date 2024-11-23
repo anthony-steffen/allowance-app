@@ -21,7 +21,7 @@ const Hero = () => {
         </Heading>
         <List spacing={1} styleType="none">
           <ListItem>
-            <ListIcon size as={CheckCircleIcon} color="green.500"/>
+            <ListIcon as={CheckCircleIcon} color="green.500"/>
             Exibição de uma lista de tarefas diárias com descrição e valor de recompensa.
           </ListItem>
           <ListItem>
