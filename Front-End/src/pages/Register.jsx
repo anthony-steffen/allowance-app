@@ -1,7 +1,7 @@
-//Imports hook-form
+// Imports React Hook Form
 import { useForm } from "react-hook-form";
 
-//Imports Chakra UI
+// Imports Chakra UI
 import {
 	Button,
 	VStack,
@@ -18,12 +18,12 @@ import {
 
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-//Imports AuthContext
-import { useContext, useState } from "react";
-import AuthContext from "../context/authContext";
-
-// Imports react-router-dom to navigate between pages
+// Imports React e hooks adicionais
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Imports API
+import api from "../services/api";
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -34,47 +34,48 @@ const Register = () => {
 		watch,
 		reset,
 	} = useForm();
-	const { registerUser } = useContext(AuthContext);
 	const password = watch("password");
 	const toast = useToast();
 	const [show, setShow] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+	const [showConfirm, setShowConfirm] = useState(false);
 
+	const handleClick = () => setShow(!show);
+	const handleConfirmClick = () => setShowConfirm(!showConfirm);
+
+	// Função de envio do formulário
 	const onSubmit = async (data) => {
-		const userData = {
-			userName: data.name, // Mapeia 'name' para 'userName' para o back-end
-			email: data.email,
-			password: data.password,
-			type: "user", // Defina o tipo de usuário ou torne-o dinâmico, se necessário
-		};
-	
-		const result = await registerUser(userData);
-	
-		if (result.success) {
-			reset();
+		try {
+			const userData = {
+				name: data.name,
+				email: data.email,
+				password: data.password,
+				type: "user", // Adapte conforme necessário
+			};
+			console.log(userData);
+
+			const response = await api.post("/auth/register", userData);
+
 			toast({
-				title: result.message,
-				description: "Você será redirecionado para a página de Login",
+				title: "Registro realizado com sucesso!",
+				description: response.data.message || "Conta criada com sucesso.",
 				status: "success",
 				duration: 5000,
 				isClosable: true,
 			});
-			setTimeout(() => {
-				navigate("/login");
-			}, 5000);
-		} else {
+
+			reset(); // Limpa o formulário
+			setTimeout(() => navigate("/login"), 2000); // Redireciona após 2 segundos
+		} catch (error) {
+			// Trata erros
 			toast({
-				title: "Erro no registro",
-				description: result.message,
+				title: "Erro ao registrar",
+				description: error.response?.data?.message || "Não foi possível criar sua conta.",
 				status: "error",
 				duration: 5000,
 				isClosable: true,
 			});
 		}
 	};
-
-	const handleClick = () => setShow(!show);
-  const handleConfirmClick = () => setShowConfirm(!showConfirm);
 
 	return (
 		<Flex maxW="2xl" mx="auto" direction="column" align="center">
@@ -83,7 +84,8 @@ const Register = () => {
 				bgClip="text"
 				fontSize={{ base: "2xl", md: "4xl" }}
 				textAlign="center"
-				my={10}>
+				my={10}
+			>
 				ALLOWANCE
 			</Heading>
 
@@ -92,7 +94,8 @@ const Register = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				align="center"
 				w={{ base: "80%", md: "50%", xl: "50%" }}
-				mx="auto">
+				mx="auto"
+			>
 				<FormControl mb={1} isInvalid={errors.name}>
 					<FormLabel ms={2} mb={0}>
 						Name
@@ -101,7 +104,6 @@ const Register = () => {
 						type="text"
 						placeholder="Digite seu nome"
 						{...register("name", {
-							// required: "O nome é obrigatório",
 							minLength: {
 								value: 3,
 								message: "O nome deve ter no mínimo 3 caracteres",
@@ -128,10 +130,6 @@ const Register = () => {
 						placeholder="Digite seu email"
 						{...register("email", {
 							required: "O email é obrigatório",
-							pattern: {
-								value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-								message: "email inválido",
-							},
 						})}
 					/>
 					{errors.email && (
@@ -163,11 +161,6 @@ const Register = () => {
 								},
 							})}
 						/>
-						{errors.password && (
-							<Text color={"red.400"} size={"sm"}>
-								{errors.password.message}
-							</Text>
-						)}
 						<InputRightElement width="4.5rem">
 							{show ? (
 								<ViewOffIcon h={5} w={5} onClick={handleClick} />
@@ -176,36 +169,40 @@ const Register = () => {
 							)}
 						</InputRightElement>
 					</InputGroup>
+					{errors.password && (
+						<Text color={"red.400"} size={"sm"}>
+							{errors.password.message}
+						</Text>
+					)}
 				</FormControl>
 
-				<FormControl imb={1} isInvalid={errors.confirmPassword}>
+				<FormControl mb={1} isInvalid={errors.confirmPassword}>
 					<FormLabel ms={2} mb={0}>
 						Confirm Password
 					</FormLabel>
-          <InputGroup size="md">
-					<Input
-
-            type={showConfirm ? "text" : "password"}
-						placeholder="Confirm Password"
-						{...register("confirmPassword", {
-							required: "Confirme a senha",
-							validate: (value) =>
-								value === password || "As senhas não correspondem",
-						})}
-					/>
+					<InputGroup size="md">
+						<Input
+							type={showConfirm ? "text" : "password"}
+							placeholder="Confirm Password"
+							{...register("confirmPassword", {
+								required: "Confirme a senha",
+								validate: (value) =>
+									value === password || "As senhas não correspondem",
+							})}
+						/>
+						<InputRightElement width="4.5rem">
+							{showConfirm ? (
+								<ViewOffIcon h={5} w={5} onClick={handleConfirmClick} />
+							) : (
+								<ViewIcon h={5} w={5} onClick={handleConfirmClick} />
+							)}
+						</InputRightElement>
+					</InputGroup>
 					{errors.confirmPassword && (
 						<Text color={"red.400"} size={"sm"}>
 							{errors.confirmPassword.message}
 						</Text>
 					)}
-          <InputRightElement width="4.5rem">
-							{showConfirm ? (
-								<ViewOffIcon h={5} w={5} onClick={handleConfirmClick}/>
-							) : (
-								<ViewIcon h={5} w={5} onClick={handleConfirmClick}/>
-							)}
-						</InputRightElement>
-          </InputGroup>
 				</FormControl>
 
 				<Button
@@ -213,7 +210,8 @@ const Register = () => {
 					variant="solid"
 					w="100%"
 					mt={4}
-					fontSize={{ base: "md", md: "lg" }}>
+					fontSize={{ base: "md", md: "lg" }}
+				>
 					Register
 				</Button>
 			</VStack>
