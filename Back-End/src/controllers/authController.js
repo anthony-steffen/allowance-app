@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 // Registrar novo usuário
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, type } = req.body;
 
     // Verificar se o email já existe
     const existingUser = await User.findOne({ where: { email } });
@@ -24,6 +24,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      type:
     });
     res.status(201).json({ message: 'Usuário registrado com sucesso' });
   } catch (error) {
