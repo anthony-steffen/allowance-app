@@ -1,40 +1,31 @@
-//Imports hook-form
-import { useForm } from 'react-hook-form'
-
-//Imports Chakra UI
-import { 
-  Button, 
-  VStack, 
-  Heading, 
-  Input, 
-  FormControl, 
-  FormLabel, 
+import { useState, useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  Button,
+  VStack,
+  Heading,
+  Input,
+  FormControl,
+  FormLabel,
   Text,
   useToast,
   Box,
   Flex,
+  InputGroup,
   InputRightElement,
-  InputGroup
-} from '@chakra-ui/react'
-
-import {ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
-
-//Imports AuthContext
+} from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/authContext';
-import { useContext, useState } from 'react';
-
-//Imports react-router-dom to navigate between pages
-import { useNavigate,Link } from 'react-router-dom';
-
-//Import Crypto function to decrypt the user's data
-import { decrypt } from '../shared/crypto';
+// import { passwordValidation } from '../shared/validation';
+import api from '../services/api';
 
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const { login } = useContext(AuthContext);
   const [show, setShow] = useState(false)
-  
+  const [isLoading, setIsLoading] = useState(false)
   
   //Instance of useNavigate and useToast to send messages management
   const navigate = useNavigate();
@@ -42,35 +33,42 @@ const Login = () => {
 
   const handleClick = () => setShow(!show);
   
-  const onSubmit = data => {
-    
-    //Get user data from localStorage if it exists
-    const findUser = localStorage.getItem('user');
-    const users = findUser ? decrypt(findUser) : null;
-    
-    if (users && data.email.toLowerCase() === users.email.toLowerCase() && data.password === users.password) {
-      login(data);
-      reset();
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+
+    try {
+      const response = await api.post('/auth/login', {
+        email: data.email.toLowerCase(),
+        password: data.password,
+      });
+
+      const { user, token } = response.data;
+      login({ user, token });
+
       toast({
-        title: 'Seja Bem-Vindo',
-        description: 'Você será redirecionado para a página de tarefas',
+        title: 'Login realizado com sucesso!',
+        description: 'Redirecionando para a página inicial.',
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
-      setTimeout(() => {
-        navigate('/home');
-      }, 5000);
-    } else {
+      console.log(response.data);
+
+      reset();
+      setTimeout(() => navigate('/home'), 1000);
+    } catch (error) {
       toast({
-        title: 'Email ou senha incorretos',
-        description: 'Por favor, tente novamente',
+        title: 'Erro no login',
+        description: 'Verifique suas credenciais e tente novamente.',
         status: 'error',
         duration: 5000,
         isClosable: true,
+        message: error.message,
       });
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Flex maxW='2xl' mx='auto' direction='column' align='center' >
@@ -126,7 +124,14 @@ const Login = () => {
           </InputGroup>
         </FormControl>
 
-        <Button type='submit' variant='solid' w='100%' mt={4} fontSize={{ base: 'md', md: 'lg' }}>
+        <Button 
+        type='submit' 
+        variant='solid' 
+        w='100%' 
+        mt={4} 
+        fontSize={{ base: 'md', md: 'lg' }}
+        isLoading={isLoading}
+        >
           Login
         </Button>
         <Box>
