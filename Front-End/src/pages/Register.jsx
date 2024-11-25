@@ -23,7 +23,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Imports API
-import api from "../services/api";
+import { API } from "../services/api";
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -53,7 +53,7 @@ const Register = () => {
 			};
 			console.log(userData);
 
-			const response = await api.post("/auth/register", userData);
+			const response = await API.post("/auth/register", userData);
 
 			toast({
 				title: "Registro realizado com sucesso!",

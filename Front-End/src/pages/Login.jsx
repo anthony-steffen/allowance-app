@@ -18,7 +18,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/authContext";
 import { passwordValidation, emailValidation } from "../shared/validation";
-import api from "../services/api";
+import { API } from "../services/api"; "../services/api";
 
 const Login = () => {
 	const {
@@ -41,7 +41,7 @@ const Login = () => {
 		setIsLoading(true);
 
 		try {
-			const response = await api.post("/auth/login", {
+			const response = await API.post("/auth/login", {
 				email: data.email.toLowerCase(),
 				password: data.password,
 			});
