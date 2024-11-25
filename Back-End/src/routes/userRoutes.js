@@ -1,16 +1,13 @@
 const express = require('express');
 
-
 const {
   getAllUsers,
   getUserById,
-  createUser,
   updateUser,
   deleteUser,
 } = require('../controllers/userController');
 
 const router = express.Router();
-
 
 router.get('/', getAllUsers); // Busca todos os usuários
 router.get('/:id', getUserById); // Busca usuário por id
