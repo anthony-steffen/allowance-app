@@ -10,10 +10,12 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Anexa os dados do usuário à requisição
-    next();
+    
+     // Atribui o ID do usuário ao req.user
+     req.user = { userId: decoded.id };
+     next();
   } catch (error) {
-    res.status(401).json({ error: 'Token inválido ou expirado.' });
+    res.status(401).json({ message: "Token inválido ou expirado.", error: error.message });
   }
 };
 

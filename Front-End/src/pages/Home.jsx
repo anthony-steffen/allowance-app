@@ -248,6 +248,31 @@ const Home = () => {
       });
     }
   };
+
+  const handleCompleteAllTasks = async () => {
+    try {
+      const response = await API.post("/tasks/complete-all");
+      toast({
+        title: "Sucesso!",
+        description: response.data.message,
+        status: "success",
+        duration: 3000,
+      });
+      // Atualiza o estado local com todas as tarefas como concluídas
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => ({ ...task, status: 'completed' }))
+      );
+    } catch (error) {
+      toast({
+        title: "Erro ao completar tarefas.",
+        description: error.response?.data?.message || error.message,
+        status: "error",
+        duration: 3000,
+      });
+    }
+  };
+  
+
   
   console.log(tasks);
 
@@ -256,6 +281,17 @@ const Home = () => {
       <Heading as="h1" size="lg" mb={4} textAlign="center">
         Minhas Tarefas Diárias
       </Heading>
+
+      <Button
+        maxW="140px"
+        bg={tasks.every(task => task.status === "completed") ? 'teal.700' : 'black'}
+        color={!tasks.every(task => task.status === "completed") ? 'white' : 'yellow.100'}
+        m={'auto'}
+        mb={3}
+        onClick={() => { handleCompleteAllTasks() }}  
+      >
+        {tasks.every(task => task.status === "completed") ? 'Concluídas' : 'Concluir Todas'}
+      </Button>
 
       {loading ? (
         <Text textAlign="center">Carregando tarefas...</Text>

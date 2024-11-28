@@ -24,9 +24,9 @@ router.put('/:id', authenticate, updateTask); // Atualiza tarefa por id, requer 
 router.delete('/:id', authenticate, deleteTask); // Deleta tarefa por id, requer autenticação
 
 //Rotas funcionais
-router.get('/daily', getDailyTasks);
+router.get('/daily',authenticate, getDailyTasks);
 router.patch('/:id/toggle', toggleTaskCompletion);
-router.post('/complete-all', completeAllTasks);
+router.post('/complete-all', authenticate, completeAllTasks);
 router.post('/request-approval', requestTaskApproval);
 
 module.exports = router;

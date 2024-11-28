@@ -101,18 +101,22 @@ const toggleTaskCompletion = async (req, res) => {
 };
 
 // Concluir todas as tarefas de um usuário
-const completeAllTasks = async (req, res) => {
+const completeAllTasks = async (_req, res) => {
   try {
-    const { userId } = req.user; // Obtendo o ID do usuário logado
-    await Task.update(
+    const [affectedRows] = await Task.update(
       { status: 'completed' },
-      { where: { userId, status: 'pending' } }
+      { where: { status: 'pending' } }
     );
-    res.status(200).json({ message: 'Todas as tarefas foram concluídas!' });
+    if (affectedRows === 0) {
+      return res.status(404).json({ message: 'Nenhuma tarefa pendente encontrada.' });
+    }
+    res.status(200).json({ message: 'Todas as tarefas foram concluídas com sucesso!' });
   } catch (error) {
-    res.status(500).json({ message: 'Erro ao concluir todas as tarefas.', error });
+    res.status(500).json({ message: 'Erro ao concluir as tarefas.', error });
   }
 };
+
+  
 
 // Solicitar aprovação das tarefas concluídas do dia
 const requestTaskApproval = async (req, res) => {
