@@ -61,7 +61,6 @@ const Login = () => {
 				duration: 4000,
 				isClosable: true,
 			});
-			console.log(response.data);
 
 			reset();
 			setTimeout(() => navigate("/home"), 1000);

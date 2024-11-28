@@ -51,7 +51,6 @@ const Register = () => {
 				password: data.password,
 				type: "user", // Adapte conforme necessário
 			};
-			console.log(userData);
 
 			const response = await API.post("/auth/register", userData);
 

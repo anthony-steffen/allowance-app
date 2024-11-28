@@ -272,10 +272,6 @@ const Home = () => {
     }
   };
   
-
-  
-  console.log(tasks);
-
   return (
     <Flex p={3} maxW="800px" mx="auto" direction="column">
       <Heading as="h1" size="lg" mb={4} textAlign="center">
