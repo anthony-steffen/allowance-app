@@ -11,5 +11,5 @@ export const updateTaskStatus = async (taskId) => {
 };
 
 export const completeDailyTasks = async () => {
-  await API.post('/tasks/complete');
+  await API.post('/tasks/complete-all');
 };
