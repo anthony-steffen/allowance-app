@@ -47,6 +47,11 @@ const Login = () => {
 			});
 
 			const { user, token } = response.data;
+
+			// Armazenar o token no localStorage
+			localStorage.setItem('token', token);
+
+			// Armazenar o usuário e o token no contexto de autenticação
 			login({ user, token });
 
 			toast({
