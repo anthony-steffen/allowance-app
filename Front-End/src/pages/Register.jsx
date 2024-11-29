@@ -146,19 +146,7 @@ const Register = () => {
 						<Input
 							type={show ? "text" : "password"}
 							placeholder="Password"
-							{...register("password", {
-								required: "A senha é obrigatória",
-								minLength: {
-									value: 8,
-									message: "A senha deve ter pelo menos 8 caracteres",
-								},
-								pattern: {
-									value:
-										/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-									message:
-										"A senha deve conter letras maiúsculas, minúsculas, números e um caractere especial",
-								},
-							})}
+							{...register("password")}
 						/>
 						<InputRightElement width="4.5rem">
 							{show ? (
