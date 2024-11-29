@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING,
     status: DataTypes.STRING,
     dueDate: DataTypes.DATE,
-    value: DataTypes.DECIMAL
+    value: DataTypes.FLOAT,
   }, {
     timestamps: false,
     tableName: 'Tasks',

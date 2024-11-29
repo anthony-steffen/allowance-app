@@ -20,17 +20,6 @@
 // import AuthAdminModal from '../components/AuthAdminModal';
 
 // const Home = () => {
-//   const {
-//     sendToApproval,
-//     approved,
-//     tasks, 
-//     loaded, 
-//     loadDailyTasks,
-//     toggleTaskCompletion, 
-//     completeAllTasks, 
-//     recordCompletedTasks 
-//   } = useContext(TaskContext);
-//   const colorMode = useColorMode();
 
 //   const progress = tasks.filter(task => task.done).length / tasks.length * 100;
 //   const allCompleted = tasks.every(task => task.done);
@@ -207,6 +196,8 @@ const Home = () => {
   const toast = useToast();
   const { colorMode } = useColorMode();
 
+  const progress = tasks.filter(task => task.status === "completed").length / tasks.length * 100;
+
   // Função para carregar tarefas da API
   useEffect(() => {
       const fetchUpdatedTasks = async () => {
@@ -271,11 +262,18 @@ const Home = () => {
       });
     }
   };
-  
+
+ const completedTasks = tasks.filter(task => task.status === "completed");
+ const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0);
+ console.log(typeof totalValue);
+
   return (
     <Flex p={3} maxW="800px" mx="auto" direction="column">
       <Heading as="h1" size="lg" mb={4} textAlign="center">
         Minhas Tarefas Diárias
+      </Heading>
+      <Heading as="h1" size="lg" mb={4} textAlign="center">
+        Mesada R$ {progress.toFixed(2)}
       </Heading>
 
       <Button

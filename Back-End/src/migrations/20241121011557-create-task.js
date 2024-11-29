@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       value: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.FLOAT
       },
     });
   },
