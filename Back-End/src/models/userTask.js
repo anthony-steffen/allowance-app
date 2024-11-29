@@ -30,12 +30,12 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'UserTasks',
   });
 
-  Task.associate = (models) => {
-    Task.belongsTo(models.User, {
+  task.associate = (models) => {
+    task.belongsTo(models.User, {
       as: 'user',
       foreignKey: 'userId',
     });
-    Task.belongsTo(models.Task, {
+    task.belongsTo(models.Task, {
       as: 'task',
       foreignKey: 'taskId',
     });
