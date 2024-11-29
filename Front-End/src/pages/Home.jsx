@@ -196,7 +196,7 @@ const Home = () => {
   const toast = useToast();
   const { colorMode } = useColorMode();
 
-  const progress = tasks.filter(task => task.status === "completed").length / tasks.length * 100;
+  // const progress = tasks.filter(task => task.status === "completed").length / tasks.length * 100;
 
   // Função para carregar tarefas da API
   useEffect(() => {
@@ -263,9 +263,11 @@ const Home = () => {
     }
   };
 
+  // Filtra as tarefas concluídas e calcula o valor total
  const completedTasks = tasks.filter(task => task.status === "completed");
  const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0);
- console.log(typeof totalValue);
+
+
 
   return (
     <Flex p={3} maxW="800px" mx="auto" direction="column">
@@ -273,7 +275,7 @@ const Home = () => {
         Minhas Tarefas Diárias
       </Heading>
       <Heading as="h1" size="lg" mb={4} textAlign="center">
-        Mesada R$ {progress.toFixed(2)}
+        Mesada R$ {totalValue}
       </Heading>
 
       <Button
