@@ -51,13 +51,16 @@ const loginUser = async (req, res) => {
 
     // Gerar token JWT com o type e id do usuário
     const token = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, {
-      expiresIn: '2h',
+      expiresIn: '1h',
     });
-    res.status(200).json({ message: 'Login realizado com sucesso', token });
+    res.status(200).json({ 
+      message: 'Login realizado com sucesso',
+      token,
+      type: user.type
+    });
   }
   catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao realizar login' });
+    res.status(500).json({ error: 'Erro ao realizar login', message: error.message });
   }
 }
 

@@ -41,10 +41,7 @@ const Login = () => {
 		setIsLoading(true);
 
 		try {
-			const response = await API.post("/auth/login", {
-				email: data.email.toLowerCase(),
-				password: data.password,
-			});
+			const response = await API.post("/auth/login", data);
 
 			const { user, token } = response.data;
 
