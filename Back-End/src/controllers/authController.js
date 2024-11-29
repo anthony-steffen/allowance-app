@@ -49,8 +49,10 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: 'Senha incorreta' });
     }
 
-    // Gerar token JWT
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+    // Gerar token JWT com o type e id do usuário
+    const token = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, {
+      expiresIn: '2h',
+    });
     res.status(200).json({ message: 'Login realizado com sucesso', token });
   }
   catch (error) {

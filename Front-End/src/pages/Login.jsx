@@ -17,7 +17,7 @@ import {
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/authContext";
-import { passwordValidation, emailValidation } from "../shared/validation";
+import { emailValidation } from "../shared/validation";
 import { API } from "../services/api"; "../services/api";
 
 const Login = () => {
@@ -56,13 +56,14 @@ const Login = () => {
 
 			toast({
 				title: "Login realizado com sucesso!",
-				description: "Redirecionando para a página inicial.",
+				description: "Redirecionamos você...",
 				status: "success",
 				duration: 4000,
 				isClosable: true,
 			});
 
 			reset();
+			console.log(user.type);
 			setTimeout(() => navigate("/home"), 1000);
 		} catch (error) {
 			toast({
@@ -122,7 +123,7 @@ const Login = () => {
 							<Input
 								type={show ? "text" : "password"}
 								placeholder="Password"
-								{...register("password", passwordValidation)}
+								{...register("password")}
 							/>
 							{errors.password && (
 								<Text color={"red.400"} size={"sm"}>
