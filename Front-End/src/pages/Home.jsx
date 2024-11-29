@@ -174,6 +174,8 @@
 // export default Home;
 import { useEffect, useState } from "react";
 import {
+  CircularProgress,
+  CircularProgressLabel,
   Button,
   Card,
   CardBody,
@@ -263,9 +265,24 @@ const Home = () => {
     }
   };
 
+  const handleClick = async () => {
+    toast({
+      title: "Solicitação enviada para aprovação.",
+      status: "success",
+      duration: 3000,
+    });
+  };
+
   // Filtra as tarefas concluídas e calcula o valor total
  const completedTasks = tasks.filter(task => task.status === "completed");
- const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0);
+ const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0).toFixed(2);
+
+ //Verifica se todas as tarefas foram concluídas para desabilitar o botão
+ const allTasksCompleted = tasks.every(task => task.status === "completed");
+
+ // Calcula o progresso das tarefas
+  const progress = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
+  
 
 
 
@@ -278,16 +295,69 @@ const Home = () => {
         Mesada R$ {totalValue}
       </Heading>
 
+      {/* Exibe a mensagem de conclusão se a aprovação foi solicitada */}
+      
+      <Flex
+        bg={colorMode === "dark" ? "none" : "gray.200"}
+        p={4}
+        borderRadius={10}
+        border={colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"}
+        boxShadow="md"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+        direction={{ base: "column", md: "row" }}
+        gap={4}
+      >
+        <CircularProgress
+          value={progress}
+          color={
+            progress <= 30
+              ? "red.500"
+              : progress <= 60
+              ? "yellow.500"
+              : progress <= 99
+              ? "blue.500"
+              : "green.500"
+          }
+          size={{ base: "50px", md: "60px" }}
+        >
+          <CircularProgressLabel
+            color={colorMode === "dark" ? "gray.200" : "black"}
+            fontWeight={"bold"}
+            fontSize={"sm"}
+          >
+            {progress ? `${progress.toFixed(0)}%` : "0%"}
+          </CircularProgressLabel>
+        </CircularProgress>
+
+        <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
+          {"Recompensa Diária:"}
+        </Text>
+        <Text fontSize="lg" fontWeight="bold" color="teal.600" textAlign="center">
+          {`R$ ${totalValue}`}
+        </Text>
+        <Button
+            disabled={tasks.length === 0}
+            maxW="160px" 
+            onClick={handleClick}
+            >
+              Solicitar Aprovação
+            </Button>
+
+
       <Button
         maxW="140px"
         bg={tasks.every(task => task.status === "completed") ? 'teal.700' : 'black'}
         color={!tasks.every(task => task.status === "completed") ? 'white' : 'yellow.100'}
         m={'auto'}
         mb={3}
-        onClick={() => { handleCompleteAllTasks() }}  
+        onClick={() => { handleCompleteAllTasks() }}
+        disabled={allTasksCompleted}
       >
         {tasks.every(task => task.status === "completed") ? 'Concluídas' : 'Concluir Todas'}
       </Button>
+      </Flex>
 
       {loading ? (
         <Text textAlign="center">Carregando tarefas...</Text>
