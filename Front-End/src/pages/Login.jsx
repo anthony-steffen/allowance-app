@@ -38,12 +38,12 @@ const Login = () => {
 	const onSubmit = async (data) => {
 		try {
 			setIsLoading(true);
-			const userData = {
-				email: data.email,
-				password: data.password,
-			};
+			// const userData = {
+			// 	email: data.email,
+			// 	password: data.password,
+			// };
 
-			const response = await API.post("/auth/login", userData);
+			const response = await API.post("/auth/login", data);
 
 			toast({
 				title: response.data.message,
@@ -64,7 +64,6 @@ const Login = () => {
 			reset();
 			setIsLoading(false);
 			
-
 		} catch (error) {
 			setIsLoading(false);
 			toast({

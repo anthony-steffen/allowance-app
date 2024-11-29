@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Espera o token no formato: "Bearer <token>"
+  // const token = req.headers.authorization?.split(' ')[1]; // Espera o token no formato: "Bearer <token>"
+  const token = req.cookies?.token; // Obter o token do cookie
 
   if (!token) {
     return res.status(401).json({ error: 'Acesso negado. Token não fornecido.' });

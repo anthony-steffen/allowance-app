@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
     // Verificar se o email existe
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ error: 'email não cadastrado' });
+      return res.status(400).json({ error: 'Email não cadastrado' });
     }
 
     // Verificar a senha
@@ -48,20 +48,50 @@ const loginUser = async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({ error: 'Senha incorreta' });
     }
+    
 
-    // Gerar token JWT com o type e id do usuário
+    // Gerar token JWT com id e tipo do usuário
     const token = jwt.sign({ id: user.id, type: user.type }, JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '2h',
     });
-    res.status(200).json({ 
+
+    // Configurar o cookie HTTP-only
+    res.cookie('token', token, {
+      httpOnly: true,    // Torna o cookie inacessível ao JavaScript do navegador
+      secure: process.env.NODE_ENV === 'production', // Usar "secure" apenas em produção
+      sameSite: 'strict', // Protege contra CSRF
+      maxAge: 2 * 60 * 60 * 1000, // 2 horas em milissegundos
+    });
+
+    return res.status(200).json({
       message: 'Login realizado com sucesso',
-      token,
-      type: user.type
+      type: user.type,
     });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ error: 'Erro ao realizar login', message: error.message });
   }
-}
+};
+    
+//     res.status(200).json({ 
+//       message: 'Login realizado com sucesso',
+//       token,
+//       type: user.type
+//     });
+//   }
+//   catch (error) {
+//     res.status(500).json({ error: 'Erro ao realizar login', message: error.message });
+//   }
+// }
 
-module.exports = { registerUser, loginUser };
+// Logout
+const logoutUser = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+
+  res.status(200).json({ message: 'Logout realizado com sucesso.' });
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
