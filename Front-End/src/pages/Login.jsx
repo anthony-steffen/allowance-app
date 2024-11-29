@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
 	Button,
@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
-import AuthContext from "../context/authContext";
 import { emailValidation } from "../shared/validation";
 import { API } from "../services/api"; "../services/api";
 
@@ -27,7 +26,6 @@ const Login = () => {
 		formState: { errors },
 		reset,
 	} = useForm();
-	const { login } = useContext(AuthContext);
 	const [show, setShow] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -38,43 +36,46 @@ const Login = () => {
 	const handleClick = () => setShow(!show);
 
 	const onSubmit = async (data) => {
-		setIsLoading(true);
-
 		try {
-			const response = await API.post("/auth/login", data);
+			setIsLoading(true);
+			const userData = {
+				email: data.email,
+				password: data.password,
+			};
 
-			const { user, token } = response.data;
-
-			// Armazenar o token no localStorage
-			localStorage.setItem('token', token);
-
-			// Armazenar o usuário e o token no contexto de autenticação
-			login({ user, token });
+			const response = await API.post("/auth/login", userData);
 
 			toast({
-				title: "Login realizado com sucesso!",
-				description: "Redirecionamos você...",
+				title: response.data.message,
+				description: "Redirecionando você...",
 				status: "success",
-				duration: 4000,
+				duration: 3000,
 				isClosable: true,
 			});
 
+			localStorage.setItem("token", response.data.token);
+			
+			if (response.data.type === "admin") {
+				navigate("/admin");
+			}
+			else {
+				navigate("/home");
+			}
 			reset();
-			console.log(user.type);
-			setTimeout(() => navigate("/home"), 1000);
-		} catch (error) {
-			toast({
-				title: "Erro no login",
-				description: "Verifique suas credenciais e tente novamente.",
-				status: "error",
-				duration: 4000,
-				isClosable: true,
-				message: error.message,
-			});
-		} finally {
 			setIsLoading(false);
+			
+
+		} catch (error) {
+			setIsLoading(false);
+			toast({
+				title: "Erro ao realizar login",
+				description: error.response.data.error || "Erro ao realizar login.",
+				status: "error",
+				duration: 9000,
+				isClosable: true,
+			});
 		}
-	};
+	}
 
 	return (
 		<Flex maxW="2xl" mx="auto" direction="column" align="center">
