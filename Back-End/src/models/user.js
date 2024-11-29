@@ -1,6 +1,6 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const user = sequelize.define('User', {
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'Users',
   });
 
-  User.associate = (models) => {
-    User.belongsToMany(models.Task, {
+  user.associate = (models) => {
+    user.belongsToMany(models.Task, {
       as: 'tasks',
       through: 'UserTasks',
       foreignKey: 'userId',
       otherKey: 'taskId',
     });
   }
-  return User;
+  return user;
 };

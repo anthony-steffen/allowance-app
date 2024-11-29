@@ -1,6 +1,6 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const Task = sequelize.define('UserTask', {
+  const task = sequelize.define('UserTask', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -40,5 +40,5 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'taskId',
     });
   }
-  return Task;
+  return task;
 };

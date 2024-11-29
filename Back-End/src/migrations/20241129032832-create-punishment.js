@@ -2,32 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Tasks', {
+    await queryInterface.createTable('Punishments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
+      describe: {
         type: Sequelize.STRING
-      },
-      description: {
-        type: Sequelize.STRING
-      },
-      status: {
-        type: Sequelize.STRING,
-        defaultValue: 'pending'
-      },
-      dueDate: {
-        type: Sequelize.DATE
       },
       value: {
         type: Sequelize.FLOAT
       },
+      add: {
+        type: Sequelize.BOOLEAN
+      },
+      dueDate: {
+        type: Sequelize.DATE
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Tasks');
+    await queryInterface.dropTable('Punishments');
   }
 };
