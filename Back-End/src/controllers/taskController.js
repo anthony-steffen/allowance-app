@@ -17,11 +17,21 @@ const getAllTasks = async (req, res) => {
     const tasks = await Task.findAll({
       attributes: ['id', 'title', 'description', 'dueDate', 'value', 'status'],
     });
-    res.status(200).json(tasks);
-  } catch (error) {
+    const newTasks = tasks.map((task) => {
+      return {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate.toLocaleDateString("pt-BR"),
+        value: task.value,
+        status: task.status,
+      };
+    });
+    res.status(200).json(newTasks);
+  }
+  catch (error) {
     res.status(500).json({ message: 'Erro ao buscar as tarefas.', error });
   }
-
 };
 
 const getTaskById = async (req, res) => {
