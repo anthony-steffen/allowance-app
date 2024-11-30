@@ -7,7 +7,6 @@ import theme  from './shared/theme'
 import ToggleButtonTheme from "./components/ToggleButtonTheme"
 
 //Context imports
-import AuthProvider from './context/authProvider.jsx'
 import TaskProvider from './context/taskProvider.jsx'
 
 // Pages Imports
@@ -23,7 +22,6 @@ import AdminDashboard from './pages/AdminDashboard.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ChakraProvider theme={theme}>
-      <AuthProvider>
         <TaskProvider>
           <ToggleButtonTheme />
           <Router>
@@ -36,7 +34,6 @@ createRoot(document.getElementById('root')).render(
             </Routes>
           </Router>
         </TaskProvider>
-      </AuthProvider>
     </ChakraProvider>
   </StrictMode>
 )

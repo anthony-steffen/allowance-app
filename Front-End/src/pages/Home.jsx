@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   CircularProgress,
   CircularProgressLabel,
@@ -17,11 +17,13 @@ import {
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 import { updateTaskStatus } from "../services/taskService";
 import { API } from "../services/api";
+import TaskContext from "../context/taskContext";
 
 const Home = () => {
-  const [tasks, setTasks] = useState([]);
+  const { tasks, setTasks, sendToApproval, setSendToApproval } = useContext(TaskContext);
   const [loading, setLoading] = useState(false);
-  const [sendToApproval, setSendToApproval] = useState(false);
+
+  console.log(sendToApproval);
   const toast = useToast();
   const { colorMode } = useColorMode();
 
@@ -39,19 +41,30 @@ const Home = () => {
 
   // Função para carregar tarefas da API
   useEffect(() => {
-      const fetchUpdatedTasks = async () => {
+    const fetchUpdatedTasks = async () => {
+      setLoading(true);
+      try {
         const response = await API.get("/tasks");
         setTasks(response.data);
+      } catch (error) {
+        toast({
+          title: "Erro ao carregar tarefas.",
+          description: error.message,
+          status: "error",
+          duration: 3000,
+        });
+      } finally {
         setLoading(false);
-      };
-      setLoading(true);
-      fetchUpdatedTasks();
-  }, []);
+      }
+    };
+
+    fetchUpdatedTasks();
+  }, [ toast, setTasks ]);
 
   // Alterna o status de uma tarefa
   const handleToggleTask = async (taskId) => {
     try {
-      // Atualiza o status da tarefa via API
+
       const response = await updateTaskStatus(taskId);
       const updatedTask = response.data;
 
@@ -102,17 +115,15 @@ const Home = () => {
     }
   };
 
-  const handleClick = async () => {
+  const handleApprovalRequest = async () => {
     // Atualiza o estado para indicar que a aprovação foi solicitada
     setSendToApproval(true);
-  
     toast({
       title: "Solicitação enviada para aprovação.",
       status: "success",
       duration: 3000,
     });
   };
-
 
   return (
     <Flex p={3} maxW="800px" mx="auto" direction="column">
@@ -176,7 +187,7 @@ const Home = () => {
           <Button
             disabled={tasks.length === 0}
             maxW="160px"
-            onClick={handleClick}
+            onClick={handleApprovalRequest}
           >
             Solicitar Aprovação
           </Button>
