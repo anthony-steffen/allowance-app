@@ -48,8 +48,6 @@ const Login = () => {
 				isClosable: true,
 			});
 
-			localStorage.setItem("token", response.data.token);
-			
 			if (response.data.type === "admin") {
 				navigate("/admin");
 			}
@@ -63,7 +61,7 @@ const Login = () => {
 			setIsLoading(false);
 			toast({
 				title: "Erro ao realizar login",
-				description: error.response.data.error || "Erro ao realizar login.",
+				description: error.response.data.error,
 				status: "error",
 				duration: 9000,
 				isClosable: true,
