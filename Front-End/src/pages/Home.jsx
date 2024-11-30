@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   CircularProgress,
   CircularProgressLabel,
@@ -15,103 +15,55 @@ import {
 } from "@chakra-ui/react";
 
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
-import { updateTaskStatus } from "../services/taskService";
 import { API } from "../services/api";
 import TaskContext from "../context/taskContext";
 
 const Home = () => {
-  const { tasks, setTasks, sendToApproval, setSendToApproval } = useContext(TaskContext);
+  const { 
+    tasks, 
+    setTasks,
+    sendToApproval, 
+    setSendToApproval,
+    tasksLoadedToday,
+    setTasksLoadedToday,
+    handleToggleTask,
+    handleCompleteAllTasks,
+
+  } = useContext(TaskContext);
   const [loading, setLoading] = useState(false);
 
   console.log(sendToApproval);
+  console.log(tasks);
   const toast = useToast();
   const { colorMode } = useColorMode();
 
-    // Filtra as tarefas concluídas e calcula o valor total
+
  const completedTasks = tasks.filter(task => task.status === "completed");
  const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0).toFixed(2);
-
- //Verifica se todas as tarefas foram concluídas para desabilitar o botão
  const allTasksCompleted = tasks.every(task => task.status === "completed");
+ const progress = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
+ const today = new Date().toLocaleDateString("pt-BR");
+ console.log(today);
 
- // Calcula o progresso das tarefas
-  const progress = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
 
   // const progress = tasks.filter(task => task.status === "completed").length / tasks.length * 100;
 
-  // Função para carregar tarefas da API
-  useEffect(() => {
-    const fetchUpdatedTasks = async () => {
-      setLoading(true);
-      try {
-        const response = await API.get("/tasks");
-        setTasks(response.data);
-      } catch (error) {
-        toast({
-          title: "Erro ao carregar tarefas.",
-          description: error.message,
-          status: "error",
-          duration: 3000,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUpdatedTasks();
-  }, [ toast, setTasks ]);
-
-  // Alterna o status de uma tarefa
-  const handleToggleTask = async (taskId) => {
+  // Função para carregar tarefas da API a cada dia
+  const handleLoadTasks = async () => {
+    setLoading(true);
     try {
-
-      const response = await updateTaskStatus(taskId);
-      const updatedTask = response.data;
-
-      const fetchUpdatedTasks = async () => {
-        const response = await API.get("/tasks");
-        setTasks(response.data);
-        setLoading(false);
-      };
-      fetchUpdatedTasks();
-
-      // Atualiza imediatamente o estado das tarefas
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updatedTask.id ? { ...task, status: updatedTask.status } : task
-        )
-      );
+      const response = await API.get("/tasks");
+      setTasks(response.data);
+      setTasksLoadedToday(true); // Marca como carregado para o dia
     } catch (error) {
-      // Exibe um toast de erro
       toast({
-        title: "Erro ao atualizar tarefa.",
-        description: error.response?.data?.message || error.message,
+        title: "Erro ao carregar tarefas.",
+        description: error.message,
         status: "error",
         duration: 3000,
       });
-    }
-  };
-
-  const handleCompleteAllTasks = async () => {
-    try {
-      const response = await API.post("/tasks/complete-all");
-      toast({
-        title: "Sucesso!",
-        description: response.data.message,
-        status: "success",
-        duration: 3000,
-      });
-      // Atualiza o estado local com todas as tarefas como concluídas
-      setTasks((prevTasks) =>
-        prevTasks.map((task) => ({ ...task, status: 'completed' }))
-      );
-    } catch (error) {
-      toast({
-        title: "Erro ao completar tarefas.",
-        description: error.response?.data?.message || error.message,
-        status: "error",
-        duration: 3000,
-      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,7 +95,25 @@ const Home = () => {
         <Heading as="h1" size="lg" mb={4} textAlign="center">
           Mesada R$ {totalValue}
         </Heading>
+        
+        {/* Botão para carregar tarefas */}
+        {!tasksLoadedToday && (
+          <Flex justifyContent="center">
+            <Button
+              onClick={handleLoadTasks}
+              isLoading={loading}
+              loadingText="Carregando..."
+              colorScheme="teal"
+              mb={4}
+            >
+              Carregar Tarefas
+            </Button>
+          </Flex>
+          )}
 
+        {/* Exibe tarefas se já carregadas */}
+        {tasksLoadedToday && (
+        <>
         <Flex
           bg={colorMode === "dark" ? "none" : "gray.200"}
           p={4}
@@ -258,6 +228,8 @@ const Home = () => {
         )}
       </>
     )}
+  </>
+)}
   </Flex>
 );
 };
