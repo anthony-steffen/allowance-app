@@ -38,11 +38,6 @@ const Login = () => {
 	const onSubmit = async (data) => {
 		try {
 			setIsLoading(true);
-			// const userData = {
-			// 	email: data.email,
-			// 	password: data.password,
-			// };
-
 			const response = await API.post("/auth/login", data);
 
 			toast({

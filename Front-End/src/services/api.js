@@ -8,11 +8,3 @@ export const API = axios.create({
   },
   withCredentials: true, // Permite envio de cookies
 });
-
-// API.interceptors.request.use(async (config) => {
-//   const token = localStorage.getItem('token');
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });

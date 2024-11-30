@@ -72,17 +72,6 @@ const loginUser = async (req, res) => {
   }
 };
     
-//     res.status(200).json({ 
-//       message: 'Login realizado com sucesso',
-//       token,
-//       type: user.type
-//     });
-//   }
-//   catch (error) {
-//     res.status(500).json({ error: 'Erro ao realizar login', message: error.message });
-//   }
-// }
-
 // Logout
 const logoutUser = (req, res) => {
   res.clearCookie('token', {
