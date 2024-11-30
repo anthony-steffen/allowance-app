@@ -23,20 +23,12 @@ export const TaskProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem("tasksLoadedToday")) || false;
   });
 
-  // Salva as tarefas no localStorage sempre que elas mudam
+  // Salva as tarefas, "tasksLoadedToday" e "sendToApproval" no localStorage sempre que eles mudam
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  // Salva o estado de "sendToApproval" no localStorage sempre que ele muda
-  useEffect(() => {
-    localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
-  }, [sendToApproval]);
-
-  // Salva o estado de "tasksLoadedToday" no localStorage sempre que ele muda
-  useEffect(() => {
-    localStorage.setItem("tasksLoadedToday", JSON.stringify(tasksLoadedToday));
-  }, [tasksLoadedToday]);
+		localStorage.setItem("tasksLoadedToday", JSON.stringify(tasksLoadedToday));
+		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
+  }, [tasks, tasksLoadedToday, sendToApproval]);
 
   const updateTaskStatus = (taskId, newStatus) => {
     setTasks((prevTasks) =>

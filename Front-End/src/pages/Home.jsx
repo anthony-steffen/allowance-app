@@ -31,9 +31,6 @@ const Home = () => {
 
   } = useContext(TaskContext);
   const [loading, setLoading] = useState(false);
-
-  console.log(sendToApproval);
-  console.log(tasks);
   const toast = useToast();
   const { colorMode } = useColorMode();
 
@@ -42,19 +39,16 @@ const Home = () => {
  const totalValue = completedTasks.reduce((acc, task) => acc + task.value, 0).toFixed(2);
  const allTasksCompleted = tasks.every(task => task.status === "completed");
  const progress = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
- const today = new Date().toLocaleDateString("pt-BR");
- console.log(today);
-
-
   // const progress = tasks.filter(task => task.status === "completed").length / tasks.length * 100;
 
   // Função para carregar tarefas da API a cada dia
   const handleLoadTasks = async () => {
-    setLoading(true);
     try {
       const response = await API.get("/tasks");
-      setTasks(response.data);
-      setTasksLoadedToday(true); // Marca como carregado para o dia
+      const apiTasks = response.data;
+      setTasks(apiTasks);
+      localStorage.setItem("tasks", JSON.stringify(apiTasks));
+      setTasksLoadedToday(true);
     } catch (error) {
       toast({
         title: "Erro ao carregar tarefas.",
