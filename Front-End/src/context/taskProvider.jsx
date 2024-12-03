@@ -7,6 +7,8 @@ const { Provider } = TaskContext;
 
 export const TaskProvider = ({ children }) => {
 	const toast = useToast();
+  const today = new Date().toLocaleDateString("pt-BR");
+  
   const [tasks, setTasks] = useState(() => {
     // Recupera as tarefas do localStorage ou usa um array vazio
     const storedTasks = localStorage.getItem("tasks");
@@ -19,16 +21,32 @@ export const TaskProvider = ({ children }) => {
   });
 
   const [tasksLoadedToday, setTasksLoadedToday] = useState(() => {
-    // Recupera o estado de carregamento diário do localStorage ou usa "false"
-    return JSON.parse(localStorage.getItem("tasksLoadedToday")) || false;
+    // Recupera a data de carregamento das tarefas do localStorage ou usa "null"
+    const loadedDate = localStorage.getItem("tasksLoadedDate");
+    return loadedDate === today ? true : false;
   });
 
-  // Salva as tarefas, "tasksLoadedToday" e "sendToApproval" no localStorage sempre que eles mudam
+
+  // Salva as tarefas, a data e outros estados no localStorage sempre que mudam
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
-		localStorage.setItem("tasksLoadedToday", JSON.stringify(tasksLoadedToday));
-		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
-  }, [tasks, tasksLoadedToday, sendToApproval]);
+    localStorage.setItem("tasksLoadedDate", tasksLoadedToday ? today : null);
+    localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
+  }, [tasks, tasksLoadedToday, sendToApproval, today]);
+
+  //Atualização diária automática das tarefas
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDate = new Date().toLocaleDateString("pt-BR");
+      if (newDate !== today) {
+        setTasksLoadedToday(false); // Permite carregar novas tarefas
+        setSendToApproval(false); // Cancela a solicitação de aprovação
+        localStorage.removeItem("tasks"); // Remove tarefas do dia anterior
+      }
+    }, 1000 * 60 * 60); // Verifica a cada 1 hora
+
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+  }, [today]);
 
   const updateTaskStatus = (taskId, newStatus) => {
     setTasks((prevTasks) =>
@@ -48,7 +66,7 @@ export const TaskProvider = ({ children }) => {
 					: task
 			)
 		);
-	});
+	}, []);
 
 	const handleCompleteAllTasks = useCallback(() => {
 		// Marca todas as tarefas como concluídas
