@@ -19,12 +19,14 @@ export const TaskProvider = ({ children }) => {
 
 	const [sendToApproval, setSendToApproval] = useState(() => {
 		// Recupera o estado de "sendToApproval" do localStorage ou usa "false"
-		return JSON.parse(localStorage.getItem("sendToApproval")) || false;
+		const storedSendToApproval = localStorage.getItem("sendToApproval");
+    return storedSendToApproval ? JSON.parse(storedSendToApproval) : false;
 	});
 
 	const [tasksLoadedToday, setTasksLoadedToday] = useState(() => {
-		// Recupera a data de carregamento das tarefas do localStorage ou usa "null"
-		localStorage.getItem("tasksLoadedDate");
+		// Recupera a data de carregamento das tarefas do localStorage ou usa "false"
+		const storedTasksLoadedDate = localStorage.getItem("tasksLoadedDate");
+		return storedTasksLoadedDate ? storedTasksLoadedDate : false;
 	});
 
 	const [approvedTasks, setApprovedTasks] = useState(() => {
@@ -32,15 +34,19 @@ export const TaskProvider = ({ children }) => {
 		return storedApprovedTasks ? JSON.parse(storedApprovedTasks) : [];
 	});
 
-	const [penalties, setPenalties] = useState(punishments);
+	const [penalties, setPenalties] = useState(() => {
+		const storedPenalties = localStorage.getItem("penalties");
+		return storedPenalties ? JSON.parse(storedPenalties) : punishments;
+	});
 
 	// Salva as tarefas, a data e outros estados no localStorage sempre que mudam
 	useEffect(() => {
 		localStorage.setItem("tasks", JSON.stringify(tasks));
-		localStorage.setItem("tasksLoadedDate", tasksLoadedToday ? today : false);
+		localStorage.setItem("tasksLoadedDate", tasksLoadedToday);
 		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
 		localStorage.setItem("approvedTasks", JSON.stringify(approvedTasks));
 		localStorage.setItem("penalties", JSON.stringify(penalties));
+		localStorage.setItem("today", today);
 	}, [
 		tasks,
 		tasksLoadedToday,
@@ -115,18 +121,28 @@ export const TaskProvider = ({ children }) => {
 		});
 	}, [toast]);
 
-	// Concluir aprovação
+	// Enviar aprovação / Tarefas completadas + penalidades
 	const handleApproval = useCallback(() => {
-		const approved = tasks.filter((task) => task.status === "completed");
-		setApprovedTasks(approved);
-		setTasks([]);
-		toast({
-			title: "Aprovação enviada!",
-			description: "As tarefas foram aprovadas e salvas.",
-			status: "success",
-			duration: 3000,
-		});
-	}, [tasks, toast]);
+		const approved = sendToApproval.filter((task) => task.status === "completed");
+    const penaltiesToInclude = penalties.filter((penalty) => penalty.include === true);
+		const newArray = [{ 
+			tasks: approved,
+			date: today
+		 }, {
+			penalties: penaltiesToInclude
+		 }];
+		setApprovedTasks(newArray);
+    setTasks([]);
+    setPenalties([]);
+		setSendToApproval(false);
+    toast({
+      title: "Solicitação enviada para aprovação.",
+      status: "success",
+      duration: 3000,
+    });
+  }, [penalties, toast, today, sendToApproval]);
+
+	console.log('approvedTasks', approvedTasks);
 
 	const store = useMemo(
 		() => ({
