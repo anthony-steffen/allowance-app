@@ -40,7 +40,7 @@ const Home = () => {
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-	// const today = new Date().toLocaleDateString("pt-BR");
+	const today = new Date().toLocaleDateString("pt-BR");
 
 	// Função para carregar tarefas da API a cada dia
 	const handleLoadTasks = async () => {
@@ -49,7 +49,7 @@ const Home = () => {
 			const apiTasks = response.data;
 			setTasks(apiTasks);
 			localStorage.setItem("tasks", JSON.stringify(apiTasks));
-			setTasksLoadedToday(true);
+			setTasksLoadedToday(today);
 		} catch (error) {
 			toast({
 				title: "Erro ao carregar tarefas.",
@@ -64,7 +64,8 @@ const Home = () => {
 
 	const handleApprovalRequest = async () => {
 		// Atualiza o estado para indicar que a aprovação foi solicitada
-		setSendToApproval(true);
+		setSendToApproval(tasks)
+		setTasks([])
 		toast({
 			title: "Solicitação enviada para aprovação.",
 			status: "success",
@@ -95,7 +96,7 @@ const Home = () => {
 						Obrigado por completar suas tarefas! <br />
 						Volte amanhã para mais recompensas.
 					</Heading>
-					{/* <Button
+					<Button
 					width={{ base: "100%", md: "50%" }}
 					onClick={() => {
 					setTasksLoadedToday(false);
@@ -103,7 +104,7 @@ const Home = () => {
 					localStorage.removeItem("tasks");
 				}}>
 					Simular Novo Dia
-				</Button> */}
+				</Button>
 				</Flex>
 			) : (
 				<Flex

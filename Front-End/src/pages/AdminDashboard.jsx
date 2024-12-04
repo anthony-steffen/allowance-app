@@ -1,157 +1,116 @@
 import { useContext } from "react";
 import TaskContext from "../context/taskContext";
 import {
-  useColorMode,
-  Text,
-  Flex,
-  Heading,
-  List,
-  ListItem,
-  Button,
-  Container,
-  VStack,
+	useColorMode,
+	Text,
+	Flex,
+	Heading,
+	List,
+	ListItem,
+	Button,
+	VStack,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
-  const { sendToApproval, approveTask, toggleTaskStatus } = useContext(TaskContext);
-  const mode = useColorMode();
-  const navigate = useNavigate();
+  const {
+    sendToApproval,
+    setSendToApproval,
+    penalties,
+    setPenalties,
+    handleApproval,
+  } = useContext(TaskContext);
+  const { colorMode } = useColorMode(); 
+	// const navigate = useNavigate();
 
-  const finalApprove = sendToApproval.some((record) => record.approved);
+ const hundleToggleAproveTask = (taskId) => {
+    const tasksToApproval = sendToApproval.map((task) =>
+      task.id === taskId
+        ? { ...task, status: task.status === "completed" ? "pending" : "completed" }
+        : task
+    );
+    const penaltiesToInclude = penalties.map((penalty) =>
+      penalty.id === taskId
+        ? { ...penalty, include: penalty.include === true ? false : true }
+        : penalty
+    );
+    setSendToApproval(tasksToApproval);
+    setPenalties(penaltiesToInclude);
+  };
 
-  return (
-    <Flex p={3} maxW="800px" mx="auto" direction="column">
-      <Heading
-        my={3}
-        as="h1"
-        size="lg"
-        textAlign="center"
-        color={mode.colorMode === "dark" ? "teal.300" : "teal.600"}
+  // const handleSubmit = (taskId) => {
+  //   setTasks((prevTasks) =>
+  //     prevTasks.map((task) =>
+  //       task.id === taskId
+  //         ? { ...task, status: task.status === "completed" ? "pending" : "completed" }
+  //         : task
+  //     )
+  //   );
+  // };
+
+
+	return (
+		<Flex direction="column" align="center" p={3} w="100%">
+			<Heading as="h1" size="2xl" mb={5}>
+				Admin Dashboard
+			</Heading>
+			<Flex />
+			<Flex 
+      align='center' 
+      width={{ base: "100%", md: "70%" }}
+      direction="column"
+      border={
+        colorMode === "dark"
+          ? "1px solid #343e4b"
+          : "1px solid #cbd5e0"
+      }
+      rounded={5}
       >
-        Painel de Administração
-      </Heading>
-
-      {!finalApprove &&
-        sendToApproval.map((task) => (
-          <Container
-            bg={mode.colorMode === "dark" ? "gray.700" : "gray.200"}
-            p={3}
-            borderRadius={10}
-            border={mode.colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"}
-            boxShadow="md"
-            key={task.date}
-          >
-            <Text
-              fontSize="xl"
-              color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
-              textAlign="center"
-              fontWeight="bold"
-            >
-              Tarefas do dia {task.date}
-            </Text>
-            <Text
-              my={2}
-              fontSize="xl"
-              color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}
-              textAlign="center"
-              fontWeight="bold"
-            >
-              Valor da recompensa
-              {task.dailyReward ? `: R$ ${task.dailyReward.toFixed(2)}` : ": R$ 0,00"}
-            </Text>
-
-            {/* Tarefas Completas */}
-            <List spacing={1} my={1}>
-              {task.completed.map((taskItem) => (
-                <ListItem
-                  key={taskItem.id}
-                  color={mode.colorMode === "dark" ? "white" : "gray.800"}
-                  fontWeight="bold"
-                  fontSize="sm"
-                >
-                  <Flex dir="row" align="center" justify="space-between">
-                    <Text>{taskItem.title}</Text>
-                    <Button
-                      width={10}
-                      size="sm"
-                      onClick={() => toggleTaskStatus(task.date, taskItem.id,)}
-                      variant="ghost"
-                    >
-                      {taskItem.done ? (
-                        <CheckCircleIcon color="green.500" />
-                      ) : (
-                        <CloseIcon color="red.400" />
-                      )}
-                    </Button>
-                  </Flex>
-                </ListItem>
-              ))}
-            </List>
-
-            {/* Tarefas Não Completas */}
-            <List spacing={1}>
-              {task.notCompleted.map((taskItem) => (
-                <ListItem
-                  key={taskItem.id}
-                  color={mode.colorMode === "dark" ? "white" : "gray.800"}
-                  fontWeight="bold"
-                  fontSize="md"
-                >
-                  <Flex dir="row" align="center" justify="space-between">
-                    <Text>{taskItem.title}</Text>
-                    <Button
-                      width={10}
-                      size="sm"
-                      onClick={() => toggleTaskStatus(task.date, taskItem.id)}
-                      variant="ghost"
-                    >
-                      {taskItem.done ? (
-                        <CheckCircleIcon color="green.500" />
-                      ) : (
-                        <CloseIcon color="red.400" />
-                      )}
-                    </Button>
-                  </Flex>
-                </ListItem>
-              ))}
-            </List>
-
-            <Flex justify="space-around" align="center" my={4} flexDir={{ base: "column", md: "row" }} gap={2}>
-              <Button
-                maxW="150px"
-                onClick={approveTask}
-                bg={"teal.700"}
-                _hover={{ bg: "teal.800" }}
-              >
-                Aprovar Tarefas
-              </Button>
-            </Flex>
-          </Container>
-        ))}
-      {!finalApprove ? (
-        <Flex justify="center" align="center" my={4}>
-          <BlackList />
-        </Flex>
-      ) : (
-        <VStack justify="center" align="center" my={4}>
-          <Text align={"center"} fontSize="md" color={mode.colorMode === "dark" ? "teal.400" : "teal.600"}>
-            Não há tarefas para aprovar.<br></br> Volte amanhã!
-          </Text>
-          <Button 
-            onClick={() => navigate('/home')} 
-            mx="auto"
-            width={{ base: '50%', md: '20%' }}
-            _hover={{ bg: 'teal.800' }}
-          >
-            Go Back!
-          </Button>
-        </VStack>
-      )}
-    </Flex>
-  );
+				<Text fontSize="xl" fontWeight="bold" textAlign={"center"} my={2} >
+					Tarefas para aprovação:<br />
+          Data: {new Date().toLocaleDateString('pt-BR')}
+				</Text>
+				<List spacing={1} width={"96%"} my={4}>
+          {sendToApproval.map((task) => (
+            <ListItem
+              key={task.id}
+              p={5}
+              rounded={5}
+              border={
+                colorMode === "dark"
+                  ? "1px solid #343e4b"
+                  : "1px solid #cbd5e0"
+              }
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center">
+              <Text>{task.description}</Text>
+              {task.status === "completed" ? (
+                <VStack>
+                <CheckCircleIcon color="green.500" boxSize={{base: 5, md: 6}} onClick={ () => hundleToggleAproveTask(task.id)}/>
+                <Text fontSize={'sm'}> Aprovada</Text>
+                </VStack>
+              ) : (
+                <VStack>
+                <CloseIcon color="red.500" boxSize={{base: 5, md: 6}} onClick={ () => hundleToggleAproveTask(task.id)}/>
+                <Text fontSize={'sm'}>Reprovada</Text>
+                </VStack>
+              )}
+            </ListItem>
+          ))}
+      <BlackList />
+        </List>
+			</Flex>
+			<Button
+				mt={5}
+				colorScheme="green"
+				onClick={handleApproval}>
+				Enviar
+			</Button>
+		</Flex>
+	);
 };
 
 export default AdminDashboard;
