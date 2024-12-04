@@ -4,6 +4,7 @@ import TaskContext from "./taskContext";
 import { useToast } from "@chakra-ui/react";
 
 import { punishments } from "../shared/punishments";
+import {API} from "../services/api";
 
 const { Provider } = TaskContext;
 
@@ -15,7 +16,9 @@ export const TaskProvider = ({ children }) => {
 		// Recupera as tarefas do localStorage ou usa um array vazio
 		const storedTasks = localStorage.getItem("tasks");
 		return storedTasks ? JSON.parse(storedTasks) : [];
-	});
+  });
+
+	const [loading, setLoading] = useState(false);
 
 	const [sendToApproval, setSendToApproval] = useState(() => {
 		// Recupera o estado de "sendToApproval" do localStorage ou usa "false"
@@ -27,7 +30,7 @@ export const TaskProvider = ({ children }) => {
 		// Recupera a data de carregamento das tarefas do localStorage ou usa "false"
 		const storedTasksLoadedDate = localStorage.getItem("tasksLoadedDate");
 		return storedTasksLoadedDate ? storedTasksLoadedDate : false;
-	});
+  });
 
 	const [approvedTasks, setApprovedTasks] = useState(() => {
 		const storedApprovedTasks = localStorage.getItem("approvedTasks");
@@ -55,20 +58,11 @@ export const TaskProvider = ({ children }) => {
 
 	//Atualização diária automática das tarefas
 	useEffect(() => {
-		const interval = setInterval(() => {
-			const newDate = new Date().toLocaleDateString("pt-BR");
-			if (newDate !== today) {
-				setTasksLoadedToday(false); // Permite carregar novas tarefas
-				setSendToApproval(false); // Cancela a solicitação de aprovação
-				// setTasks([]);
-				setPenalties([]);
-				localStorage.removeItem("tasks"); // Remove tarefas do dia anterior
-			}
-		}, 1000 * 60 * 60); // Verifica a cada 1 hora
-
-		return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
-	}, [today]);
-
+    if (tasksLoadedToday !== today) {
+      setTasks([]); // Reseta tarefas do dia anterior
+      setTasksLoadedToday(false); // Libera o carregamento de novas tarefas
+    }
+  }, [tasksLoadedToday, today]);
 	const updateTaskStatus = (taskId, newStatus) => {
 		setTasks((prevTasks) =>
 			prevTasks.map((task) =>
@@ -76,6 +70,27 @@ export const TaskProvider = ({ children }) => {
 			)
 		);
 	};
+
+	const handleLoadTasks = 
+		useCallback(async () => {
+			setLoading(true);
+			try {
+				const response = await API.get("/tasks");
+				const apiTasks = response.data;
+				setTasks(apiTasks);
+				localStorage.setItem("tasks", JSON.stringify(apiTasks));
+				setTasksLoadedToday(today);
+			} catch (error) {
+				toast({
+					title: "Erro ao carregar tarefas.",
+					description: error.message,
+					status: "error",
+					duration: 3000,
+				});
+			} finally {
+				setLoading(false);
+			}
+		}, [toast, today]);
 
 	//Toggle para aprovar/reprovar tarefas
 	const handleToggleTask = useCallback((taskId) => {
@@ -150,17 +165,19 @@ export const TaskProvider = ({ children }) => {
     setTasks([]);
     setPenalties([]);
 		setSendToApproval(false);
+		tasksLoadedToday(today);
     toast({
       title: "Solicitação enviada para aprovação.",
       status: "success",
       duration: 3000,
     });
-  }, [penalties, toast, today, sendToApproval]);
+  }, [penalties, toast, today, sendToApproval, tasksLoadedToday]);
 
 	console.log('approvedTasks', approvedTasks);
 
 	const store = useMemo(
 		() => ({
+			loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -176,8 +193,10 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
+			handleLoadTasks,
 		}),
 		[
+			loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -192,6 +211,7 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
+			handleLoadTasks,
 		]
 	);
 

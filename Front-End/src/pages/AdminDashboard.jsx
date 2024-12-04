@@ -35,7 +35,6 @@ const AdminDashboard = () => {
 		setSendToApproval(tasksToApproval);
 	};
 
-
 	return (
 		<Flex direction="column" align="center" p={3} w="100%">
 			<Heading as="h1" size="2xl" mb={5}>

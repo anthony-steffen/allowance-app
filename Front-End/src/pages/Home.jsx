@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
 	CircularProgress,
 	CircularProgressLabel,
@@ -15,11 +15,11 @@ import {
 } from "@chakra-ui/react";
 
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
-import { API } from "../services/api";
 import TaskContext from "../context/taskContext";
 
 const Home = () => {
 	const {
+		loading,
 		tasks,
 		setTasks,
 		sendToApproval,
@@ -28,8 +28,9 @@ const Home = () => {
 		setTasksLoadedToday,
 		handleToggleTask,
 		handleCompleteAllTasks,
+		handleLoadTasks,
 	} = useContext(TaskContext);
-	const [loading, setLoading] = useState(false);
+
 	const toast = useToast();
 	const { colorMode } = useColorMode();
 
@@ -40,30 +41,8 @@ const Home = () => {
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-	const today = new Date().toLocaleDateString("pt-BR");
-
-	// Função para carregar tarefas da API a cada dia
-	const handleLoadTasks = async () => {
-		try {
-			const response = await API.get("/tasks");
-			const apiTasks = response.data;
-			setTasks(apiTasks);
-			localStorage.setItem("tasks", JSON.stringify(apiTasks));
-			setTasksLoadedToday(today);
-		} catch (error) {
-			toast({
-				title: "Erro ao carregar tarefas.",
-				description: error.message,
-				status: "error",
-				duration: 3000,
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
 
 	const handleApprovalRequest = async () => {
-		// Atualiza o estado para indicar que a aprovação foi solicitada
 		setSendToApproval(tasks)
 		setTasks([])
 		toast({
@@ -82,8 +61,6 @@ const Home = () => {
 			flexDir={"column"}
 			border={colorMode === "dark" ? "2px solid #343e4b" : "2px solid #cbd5e0"}>
 			{sendToApproval ? (
-				// Renderiza apenas a mensagem de agradecimento
-
 				<Flex 
 				w="80%"
 				h="100vh"
@@ -124,7 +101,7 @@ const Home = () => {
 					{!tasksLoadedToday && (
 						<Flex justifyContent="center">
 							<Button
-								onClick={handleLoadTasks}
+								onClick={handleLoadTasks()}
 								isLoading={loading}
 								loadingText="Carregando..."
 								colorScheme="teal"
