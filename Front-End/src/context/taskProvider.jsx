@@ -34,10 +34,7 @@ export const TaskProvider = ({ children }) => {
 		return storedApprovedTasks ? JSON.parse(storedApprovedTasks) : [];
 	});
 
-	const [penalties, setPenalties] = useState(() => {
-		const storedPenalties = localStorage.getItem("penalties");
-		return storedPenalties ? JSON.parse(storedPenalties) : punishments;
-	});
+	const [penalties, setPenalties] = useState(punishments);
 
 	// Salva as tarefas, a data e outros estados no localStorage sempre que mudam
 	useEffect(() => {
@@ -97,13 +94,18 @@ export const TaskProvider = ({ children }) => {
 
 	// Toogle para incluir/remover penalidades
 	const togglePenalty = useCallback((penaltyId) => {
-    setPenalties((prevPenalties) =>
-      prevPenalties.map((penalty) =>
-        penalty.id === penaltyId
-          ? { ...penalty, include: penalty.include === false ? true : false }
-          : penalty
-      ));
-  }, []);
+    const penaltiesToInclude = penalties.map((penalty) =>
+			penalty.id === penaltyId
+				? {
+						...penalty,
+						include: penalty.include === false ? true : false,
+				  }
+				: penalty
+		);
+		setPenalties(penaltiesToInclude);
+	}, [ penalties ]);
+
+	
 
   console.log(penalties);
 
@@ -125,13 +127,26 @@ export const TaskProvider = ({ children }) => {
 	const handleApproval = useCallback(() => {
 		const approved = sendToApproval.filter((task) => task.status === "completed");
     const penaltiesToInclude = penalties.filter((penalty) => penalty.include === true);
-		const newArray = [{ 
-			tasks: approved,
-			date: today
-		 }, {
-			penalties: penaltiesToInclude
-		 }];
-		setApprovedTasks(newArray);
+
+		// /Estruturando as tarefas aprovadas com a data
+  const approvedWithDate = approved.map((task) => ({
+    ...task,
+  }));
+
+  // Estruturando as penalidades com a data
+  const penaltiesWithDate = penaltiesToInclude.map((penalty) => ({
+    ...penalty,
+  }));
+
+  // Criando o objeto com a identificação pela data
+  const approvalEntry = {
+    date: today,
+    approvedTasks: approvedWithDate,
+    penalties: penaltiesWithDate,
+  };
+
+  // Atualizando o estado com a nova entrada de forma acumulativa
+  setApprovedTasks((prev) => [...prev, approvalEntry]);
     setTasks([]);
     setPenalties([]);
 		setSendToApproval(false);

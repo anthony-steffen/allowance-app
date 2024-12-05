@@ -18,8 +18,6 @@ const AdminDashboard = () => {
 	const {
 		sendToApproval,
 		setSendToApproval,
-		penalties,
-		setPenalties,
 		handleApproval,
 	} = useContext(TaskContext);
 	const { colorMode } = useColorMode();
@@ -34,25 +32,9 @@ const AdminDashboard = () => {
 				  }
 				: task
 		);
-		const penaltiesToInclude = penalties.map((penalty) =>
-			penalty.id === taskId
-				? { ...penalty, include: penalty.include === true ? false : true }
-				: penalty
-    
-		);
 		setSendToApproval(tasksToApproval);
-		setPenalties(penaltiesToInclude);
 	};
 
-	// const handleSubmit = (taskId) => {
-	//   setTasks((prevTasks) =>
-	//     prevTasks.map((task) =>
-	//       task.id === taskId
-	//         ? { ...task, status: task.status === "completed" ? "pending" : "completed" }
-	//         : task
-	//     )
-	//   );
-	// };
 
 	return (
 		<Flex direction="column" align="center" p={3} w="100%">
@@ -75,7 +57,7 @@ const AdminDashboard = () => {
             Data: {new Date().toLocaleDateString("pt-BR")}
           </Text>
           <List spacing={1} width={"96%"} my={4}>
-            {sendToApproval.map((task) => (
+            {sendToApproval.length > 0 && sendToApproval.map((task) => (
               <ListItem
                 key={task.id}
                 p={5}
