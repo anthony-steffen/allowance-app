@@ -4,7 +4,6 @@ import TaskContext from "./taskContext";
 import { useToast } from "@chakra-ui/react";
 
 import { punishments } from "../shared/punishments";
-import {API} from "../services/api";
 
 const { Provider } = TaskContext;
 
@@ -18,7 +17,7 @@ export const TaskProvider = ({ children }) => {
 		return storedTasks ? JSON.parse(storedTasks) : [];
   });
 
-	const [loading, setLoading] = useState(false);
+	// const [loading, setLoading] = useState(false);
 
 	const [sendToApproval, setSendToApproval] = useState(() => {
 		// Recupera o estado de "sendToApproval" do localStorage ou usa "false"
@@ -29,8 +28,8 @@ export const TaskProvider = ({ children }) => {
 	const [tasksLoadedToday, setTasksLoadedToday] = useState(() => {
 		// Recupera a data de carregamento das tarefas do localStorage ou usa "false"
 		const storedTasksLoadedDate = localStorage.getItem("tasksLoadedDate");
-		return storedTasksLoadedDate ? storedTasksLoadedDate : false;
-  });
+		return storedTasksLoadedDate ? JSON.parse(storedTasksLoadedDate) : false;
+	});
 
 	const [approvedTasks, setApprovedTasks] = useState(() => {
 		const storedApprovedTasks = localStorage.getItem("approvedTasks");
@@ -42,7 +41,7 @@ export const TaskProvider = ({ children }) => {
 	// Salva as tarefas, a data e outros estados no localStorage sempre que mudam
 	useEffect(() => {
 		localStorage.setItem("tasks", JSON.stringify(tasks));
-		localStorage.setItem("tasksLoadedDate", tasksLoadedToday);
+		localStorage.setItem("tasksLoadedDate", JSON.stringify(tasksLoadedToday));
 		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
 		localStorage.setItem("approvedTasks", JSON.stringify(approvedTasks));
 		localStorage.setItem("penalties", JSON.stringify(penalties));
@@ -56,41 +55,6 @@ export const TaskProvider = ({ children }) => {
 		penalties,
 	]);
 
-	//Atualização diária automática das tarefas
-	useEffect(() => {
-    if (tasksLoadedToday !== today) {
-      setTasks([]); // Reseta tarefas do dia anterior
-      setTasksLoadedToday(false); // Libera o carregamento de novas tarefas
-    }
-  }, [tasksLoadedToday, today]);
-	const updateTaskStatus = (taskId, newStatus) => {
-		setTasks((prevTasks) =>
-			prevTasks.map((task) =>
-				task.id === taskId ? { ...task, status: newStatus } : task
-			)
-		);
-	};
-
-	const handleLoadTasks = 
-		useCallback(async () => {
-			setLoading(true);
-			try {
-				const response = await API.get("/tasks");
-				const apiTasks = response.data;
-				setTasks(apiTasks);
-				localStorage.setItem("tasks", JSON.stringify(apiTasks));
-				setTasksLoadedToday(today);
-			} catch (error) {
-				toast({
-					title: "Erro ao carregar tarefas.",
-					description: error.message,
-					status: "error",
-					duration: 3000,
-				});
-			} finally {
-				setLoading(false);
-			}
-		}, [toast, today]);
 
 	//Toggle para aprovar/reprovar tarefas
 	const handleToggleTask = useCallback((taskId) => {
@@ -120,9 +84,6 @@ export const TaskProvider = ({ children }) => {
 		setPenalties(penaltiesToInclude);
 	}, [ penalties ]);
 
-	
-
-  console.log(penalties);
 
 	const handleCompleteAllTasks = useCallback(() => {
 		// Marca todas as tarefas como concluídas
@@ -165,7 +126,7 @@ export const TaskProvider = ({ children }) => {
     setTasks([]);
     setPenalties([]);
 		setSendToApproval(false);
-		tasksLoadedToday(today);
+		tasksLoadedToday(false);
     toast({
       title: "Solicitação enviada para aprovação.",
       status: "success",
@@ -173,11 +134,10 @@ export const TaskProvider = ({ children }) => {
     });
   }, [penalties, toast, today, sendToApproval, tasksLoadedToday]);
 
-	console.log('approvedTasks', approvedTasks);
 
 	const store = useMemo(
 		() => ({
-			loading,
+			// loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -188,15 +148,14 @@ export const TaskProvider = ({ children }) => {
 			setApprovedTasks,
 			penalties,
 			setPenalties,
-			updateTaskStatus,
 			handleToggleTask,
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			handleLoadTasks,
+			// handleLoadTasks,
 		}),
 		[
-			loading,
+			// loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -211,7 +170,7 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			handleLoadTasks,
+			// handleLoadTasks,
 		]
 	);
 
