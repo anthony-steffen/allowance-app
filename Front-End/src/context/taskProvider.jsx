@@ -125,14 +125,14 @@ export const TaskProvider = ({ children }) => {
   setApprovedTasks((prev) => [...prev, approvalEntry]);
     setTasks([]);
     setPenalties([]);
-		setSendToApproval(false);
-		tasksLoadedToday(false);
+		setSendToApproval([]);
+		// tasksLoadedToday(false);
     toast({
       title: "Solicitação enviada para aprovação.",
       status: "success",
       duration: 3000,
     });
-  }, [penalties, toast, today, sendToApproval, tasksLoadedToday]);
+  }, [penalties, toast, today, sendToApproval]);
 
 
 	const store = useMemo(
