@@ -9,7 +9,7 @@ const { Provider } = TaskContext;
 
 export const TaskProvider = ({ children }) => {
 	const toast = useToast();
-	const today = new Date().toLocaleDateString("pt-BR");
+	const getTodayDate = () => new Date().toLocaleDateString("pt-BR");
 
 	const [tasks, setTasks] = useState(() => {
 		// Recupera as tarefas do localStorage ou usa um array vazio
@@ -43,15 +43,32 @@ export const TaskProvider = ({ children }) => {
 		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
 		localStorage.setItem("approvedTasks", JSON.stringify(approvedTasks));
 		localStorage.setItem("penalties", JSON.stringify(penalties));
-		localStorage.setItem("today", today);
+		localStorage.setItem("today", getTodayDate());
 	}, [
 		tasks,
 		tasksLoadedToday,
 		sendToApproval,
-		today,
 		approvedTasks,
 		penalties,
 	]);
+
+	// Monitora a chegada de um novo dia para limpar as tarefas
+	const checkNewDay = setInterval(() => {
+		const today = getTodayDate();
+		if (tasksLoadedToday && tasksLoadedToday !== today) {
+			// Reseta o estado se a data mudou
+			setTasksLoadedToday(false);
+			setSendToApproval(false);
+			localStorage.removeItem("approvalDate");
+			localStorage.setItem("tasksLoadedDate", JSON.stringify(false));
+		}
+	}, 10000 * 60);
+
+	// Limpa o timeout
+	useEffect(() => {
+		return () => clearInterval(checkNewDay);
+	}
+	, [tasksLoadedToday, checkNewDay]);
 
 
 	//Toggle para aprovar/reprovar tarefas
@@ -101,37 +118,34 @@ export const TaskProvider = ({ children }) => {
 	// Enviar aprovação / Tarefas completadas + penalidades
 	const handleApproval = useCallback(() => {
 		const approved = sendToApproval.filter((task) => task.status === "completed");
-    const penaltiesToInclude = penalties.filter((penalty) => penalty.include === true);
-
-		// /Estruturando as tarefas aprovadas com a data
-  const approvedWithDate = approved.map((task) => ({
-    ...task,
-  }));
-
-  // Estruturando as penalidades com a data
-  const penaltiesWithDate = penaltiesToInclude.map((penalty) => ({
-    ...penalty,
-  }));
-
-  // Criando o objeto com a identificação pela data
-  const approvalEntry = {
-    date: today,
-    approvedTasks: approvedWithDate,
-    penalties: penaltiesWithDate,
-  };
-
-  // Atualizando o estado com a nova entrada de forma acumulativa
-  setApprovedTasks((prev) => [...prev, approvalEntry]);
-    setTasks([]);
-    setPenalties([]);
+		const totalApprovedValue = approved.reduce((acc, task) => acc + task.value, 0);
+	
+		const activePenalties = penalties.filter((penalty) => penalty.include === true);
+		const totalPenaltiesValue = activePenalties.reduce((acc, penalty) => acc + penalty.value, 0);
+	
+		const netValue = totalApprovedValue - totalPenaltiesValue;
+	
+		// Adiciona a entrada para a lista de aprovados com a data
+		const approvalEntry = {
+			date: getTodayDate(),
+			tasks: approved,
+			penalties: activePenalties,
+			netValue,
+		};
+	
+		// Atualiza as tarefas aprovadas e limpa o estado
+		setApprovedTasks((prev) => [...prev, approvalEntry]);
+		setTasks([]);
+		setPenalties([]);
 		setSendToApproval([]);
-    toast({
-      title: "Solicitação enviada para aprovação.",
-      status: "success",
-      duration: 3000,
-    });
-  }, [penalties, toast, today, sendToApproval]);
-
+	
+		toast({
+			title: "Solicitação enviada para aprovação.",
+			description: `Você acumulou R$ ${netValue.toFixed(2)} hoje.`,
+			status: "success",
+			duration: 3000,
+		});
+	}, [penalties, sendToApproval , toast]);
 
 	const store = useMemo(
 		() => ({
