@@ -8,8 +8,16 @@ const UserDashboard = () => {
   const totalValue = approvedTasks.reduce((acc, task) => acc + task.netValue, 0);
 
   return (
-    // <Flex justify="center" align="center" direction="column" textAlign={"center"} >
-      <Card p={5} borderWidth="1px" borderRadius="md" textAlign={"center"}  w={{ base: "90%", md: "60%", lg: "20%" }}>
+      <Card
+      bg={"yellow.100"}
+      color={"black"}
+      p={5} 
+      borderWidth="1px" 
+      borderRadius="md" 
+      textAlign={"center"}  
+      textShadow={"2px 1px 2px white"}
+      w={{ base: "90%", md: "60%", lg: "20%" }}
+      >
         <Text fontSize="xl" fontWeight="bold">Painel do Usuário</Text>
         <Box my={1}>
           {approvedTasks.map((task, index) => (
@@ -32,7 +40,6 @@ const UserDashboard = () => {
           Solicitar Pagamento
         </Button>
       </Card>
-    // </Flex>
   );
 };
 

@@ -41,10 +41,11 @@ const Home = () => {
 	const completedTasks = tasks.filter((task) => task.status === "completed");
 	const totalCompletedTasks = completedTasks.reduce((acc, task) => acc + task.value, 0);
 	const totalValue = approvedTasks.reduce( (acc, task) => acc + task.netValue, 0);
+	const sendValues = tasks.reduce((acc, task) => acc + task.value, 0).toFixed(2);
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");	
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-
+		console.log(sendValues);
 	const handleLoadTasks = async () => {
 		try {
 			setLoading(true);
@@ -118,13 +119,13 @@ const Home = () => {
 						textAlign="center"
 						mt={4}
 						p={2}
-						color={"teal.300"}>
+						color={colorMode === "dark" ? "teal.300" : "gray.800"}>
 						Por hoje é só! <br />
 						Volte amanhã para mais recompensas.
 					</Heading>
 
 					<UserDashboard/>
-					
+
 				</Flex>
 			) : (
 				<Flex
@@ -146,7 +147,7 @@ const Home = () => {
 						mb={4}
 						textAlign="center"
 						color={colorMode === "dark" ? "white" : "gray.800"}>
-						Mesada R$ {totalValue}
+						Mesada R$ {sendValues}
 					</Heading>
 
 					{/* Renderização Condicional: Botão de carregar tarefas */}
@@ -164,7 +165,7 @@ const Home = () => {
 						</Flex>
 					)}
 					<Flex
-						width={{ base: "100%", md: "60%" }}
+						width={{ base: "100%", md: "80%", lg: "50%" }}
 						mx="auto"
 						bg={colorMode === "dark" ? "none" : "gray.200"}
 						p={4}
@@ -204,14 +205,14 @@ const Home = () => {
 							disabled={allTasksCompleted}>
 							{allTasksCompleted ? "Concluídas" : "Concluir Todas"}
 						</Button>
-					</Flex>
-					<Flex justifyContent="center" mb={4}>
 						<Button
 							disabled={tasks.length === 0}
 							onClick={handleApprovalRequest}
 							maxW="170px">
 							Solicitar Aprovação
 						</Button>
+					</Flex>
+					<Flex justifyContent="center" mb={4}>
 					</Flex>
 
 					{loading ? (
@@ -220,7 +221,7 @@ const Home = () => {
 						tasks.map((task) => (
 							<Card
 								key={task.id}
-								width={{ base: "100%", md: "60%" }}
+								width={{ base: "100%", md: "80%", lg: "50%" }}
 								mx={"auto"}
 								mb={4}
 								bg={colorMode === "dark" ? "gray.700" : "gray.200"}
