@@ -17,8 +17,6 @@ export const TaskProvider = ({ children }) => {
 		return storedTasks ? JSON.parse(storedTasks) : [];
   });
 
-	// const [loading, setLoading] = useState(false);
-
 	const [sendToApproval, setSendToApproval] = useState(() => {
 		// Recupera o estado de "sendToApproval" do localStorage ou usa "false"
 		const storedSendToApproval = localStorage.getItem("sendToApproval");
@@ -96,6 +94,7 @@ export const TaskProvider = ({ children }) => {
 			description: "Todas as tarefas foram marcadas como concluídas.",
 			status: "success",
 			duration: 3000,
+			position: "bottom",
 		});
 	}, [toast]);
 
@@ -126,7 +125,6 @@ export const TaskProvider = ({ children }) => {
     setTasks([]);
     setPenalties([]);
 		setSendToApproval([]);
-		// tasksLoadedToday(false);
     toast({
       title: "Solicitação enviada para aprovação.",
       status: "success",
@@ -137,7 +135,6 @@ export const TaskProvider = ({ children }) => {
 
 	const store = useMemo(
 		() => ({
-			// loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -152,10 +149,8 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			// handleLoadTasks,
 		}),
 		[
-			// loading,
 			tasks,
 			setTasks,
 			sendToApproval,
@@ -170,7 +165,6 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			// handleLoadTasks,
 		]
 	);
 

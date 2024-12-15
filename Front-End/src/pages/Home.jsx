@@ -44,6 +44,8 @@ const Home = () => {
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
 
+	console.log(progress);
+
 	const handleLoadTasks = async () => {
 		try {
 			setLoading(true);
@@ -101,11 +103,10 @@ if (hasApprovalDateExpired()) {
 				w={"100%"}
 				h={'98vh'}
 				flexDir={"column"}
-				justify={"center"}
 				alignItems={"center"}
 				border={colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"}
 				>
-					<Heading as="h1" size="lg" textAlign="center" mt={10} p={2} color={"teal.700"}>
+					<Heading as="h1" size="lg" textAlign="center" mt={10} p={2} color={"teal.300"}>
 						Obrigado por completar suas tarefas! <br />
 						Volte amanhã para mais recompensas.
 					</Heading>
@@ -116,11 +117,12 @@ if (hasApprovalDateExpired()) {
 				width={{ base: "100%", md: "100%", lg: "70%" }} 
 				mx="auto" 
 				mt={8}
+				// border={colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"}
 				>
-					<Heading as="h1" size="lg" mb={4} textAlign="center">
+					<Heading as="h1" size="lg" mb={4} textAlign="center" color={colorMode === "dark" ? "teal.500" : "gray.800"}>
 						Minhas Tarefas Diárias
 					</Heading>
-					<Heading as="h1" size="lg" mb={4} textAlign="center">
+					<Heading as="h1" size="lg" mb={4} textAlign="center" color = {colorMode === "dark" ? "white" : "gray.800"}>
 						Mesada R$ {totalValue}
 					</Heading>
 
@@ -155,7 +157,7 @@ if (hasApprovalDateExpired()) {
 							>
 								<CircularProgress
 									value={progress}
-									color={progress <= 30 ? "red.500" : progress <= 60 ? "yellow.500" : "green.500"}
+									color={ progress <= 30 ? "red.500" : progress <= 60 ? "yellow.500" : "green.500" }
 									size={{ base: "50px", md: "60px" }}
 
 								>
@@ -165,11 +167,9 @@ if (hasApprovalDateExpired()) {
 									{completedTasks.length} de {tasks.length} tarefas concluídas
 								</Text>
 				
-								
-							
 								<Button
 									maxW="170px"
-									bg={allTasksCompleted ? "teal.700" : "black"}
+									bg={allTasksCompleted ? "teal.500" : "black"}
 									color={allTasksCompleted ? "yellow.100" : "white"}
 									m={"auto"}
 									onClick={handleCompleteAllTasks}
