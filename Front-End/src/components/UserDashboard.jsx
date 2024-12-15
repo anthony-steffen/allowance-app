@@ -9,7 +9,7 @@ const UserDashboard = () => {
 
   return (
     // <Flex justify="center" align="center" direction="column" textAlign={"center"} >
-      <Card p={5} borderWidth="1px" borderRadius="md" textAlign={"center"}  w={{ base: "80%", md: "60%", lg: "20%" }}>
+      <Card p={5} borderWidth="1px" borderRadius="md" textAlign={"center"}  w={{ base: "90%", md: "60%", lg: "20%" }}>
         <Text fontSize="xl" fontWeight="bold">Painel do Usuário</Text>
         <Box my={1}>
           {approvedTasks.map((task, index) => (
