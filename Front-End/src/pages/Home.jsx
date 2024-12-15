@@ -18,6 +18,7 @@ import {
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 import TaskContext from "../context/taskContext";
 import { API } from "../services/api";
+import UserDashboard from "../components/UserDashboard";
 
 const Home = () => {
 	const {
@@ -77,17 +78,6 @@ const Home = () => {
 		});
 	};
 
-	// const hasApprovalDateExpired = () => {
-	// 	const storedApprovalDate = localStorage.getItem("approvalDate");
-	// 	return storedApprovalDate && storedApprovalDate !== today;
-	// };
-
-	// // Reseta o estado quando a data expira
-	// if (hasApprovalDateExpired()) {
-	// 	setSendToApproval(false);
-	// 	localStorage.removeItem("approvalDate");
-	// }
-
 	return (
 		<VStack p={2} width={{ base: "100%" }} mx="auto" flexDir={"column"}>
 			{/* Renderização Condicional: Mensagem de agradecimento ou Dashboard */}
@@ -104,11 +94,12 @@ const Home = () => {
 						flexDir={"column"}
 						width={{ base: "100%", md: "100%", lg: "70%" }}
 						mx="auto"
-						mt={8}>
+						mt={8}
+						>
 						<Heading
 							as="h1"
 							size="lg"
-							mb={4}
+							mb={2}
 							textAlign="center"
 							color={colorMode === "dark" ? "teal.300" : "gray.800"}>
 							Minhas Tarefas Diárias
@@ -121,21 +112,19 @@ const Home = () => {
 							Mesada R$ {totalValue.toFixed(2)}
 						</Heading>
 					</Flex>
-
 					<Heading
 						as="h1"
-						size="lg"
+						size="md"
 						textAlign="center"
-						mt={10}
+						mt={4}
 						p={2}
 						color={"teal.300"}>
 						Por hoje é só! <br />
 						Volte amanhã para mais recompensas.
 					</Heading>
 
-					<Button>
-						Solicitar Pagamento
-					</Button>
+					<UserDashboard/>
+					
 				</Flex>
 			) : (
 				<Flex

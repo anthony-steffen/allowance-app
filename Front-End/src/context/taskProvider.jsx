@@ -34,6 +34,11 @@ export const TaskProvider = ({ children }) => {
 		return storedApprovedTasks ? JSON.parse(storedApprovedTasks) : [];
 	});
 
+	const [paymentRequest, setPaymentRequest] = useState(() => {
+		const storedPaymentRequest = localStorage.getItem("paymentRequest");
+		return storedPaymentRequest ? JSON.parse(storedPaymentRequest) : [];
+	});
+
 	const [penalties, setPenalties] = useState(punishments);
 
 	// Salva as tarefas, a data e outros estados no localStorage sempre que mudam
@@ -42,6 +47,7 @@ export const TaskProvider = ({ children }) => {
 		localStorage.setItem("tasksLoadedDate", JSON.stringify(tasksLoadedToday));
 		localStorage.setItem("sendToApproval", JSON.stringify(sendToApproval));
 		localStorage.setItem("approvedTasks", JSON.stringify(approvedTasks));
+		localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
 		localStorage.setItem("penalties", JSON.stringify(penalties));
 		localStorage.setItem("today", getTodayDate());
 	}, [
@@ -50,6 +56,7 @@ export const TaskProvider = ({ children }) => {
 		sendToApproval,
 		approvedTasks,
 		penalties,
+		paymentRequest,
 	]);
 
 	// Monitora a chegada de um novo dia para limpar as tarefas
@@ -147,6 +154,58 @@ export const TaskProvider = ({ children }) => {
 		});
 	}, [penalties, sendToApproval , toast]);
 
+	const handleRequestPayment = useCallback(() => {
+		const totalValue = approvedTasks.reduce((acc, task) => acc + task.netValue, 0).toFixed(2);
+	
+		if (totalValue === 0) {
+			toast({
+				title: "Nenhum valor acumulado.",
+				description: "Você ainda não realizou nenhuma tarefa aprovada.",
+				status: "error",
+				duration: 3000,
+				position: "top",
+			});
+			return;
+		}
+	
+		const paymentRequest = {
+			approvedTasks,
+			totalValue,
+		};
+	
+		// Envia o pagamento à página de Admin (poderá ser persistido em um sistema real no futuro)
+		setPaymentRequest(paymentRequest);
+		localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
+		localStorage.removeItem("approvedTasks");
+	
+		toast({
+			title: "Solicitação enviada!",
+			description: `Você solicitou o pagamento de R$ ${totalValue}.`,
+			status: "success",
+			duration: 3000,
+			position: "top",
+		});
+	
+		// Zera as tarefas aprovadas
+		setApprovedTasks([]);
+	}, [approvedTasks, toast]);
+
+	
+	const handleWithdrawal = useCallback(() => {
+		setPaymentRequest([]);
+		localStorage.removeItem("paymentRequest");
+		toast({
+			title: "Pagamento efetuado!",
+			description: "Pagamento foi efetuado com sucesso.",
+			status: "success",
+			duration: 3000,
+			position: "top",
+		});
+	}
+	, [toast]);
+	
+	
+
 	const store = useMemo(
 		() => ({
 			tasks,
@@ -163,6 +222,10 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
+			paymentRequest,
+			setPaymentRequest,
+			handleRequestPayment,
+			handleWithdrawal,
 		}),
 		[
 			tasks,
@@ -179,6 +242,10 @@ export const TaskProvider = ({ children }) => {
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
+			paymentRequest,
+			setPaymentRequest,
+			handleRequestPayment,
+			handleWithdrawal
 		]
 	);
 

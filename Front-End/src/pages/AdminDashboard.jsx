@@ -5,10 +5,10 @@ import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
 
 const AdminDashboard = () => {
-	const { sendToApproval, setSendToApproval, handleApproval } =
+	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal } =
 		useContext(TaskContext);
 	const { colorMode } = useColorMode();
-	// const navigate = useNavigate();
+
 
 	const hundleToggleAproveTask = (taskId) => {
 		const tasksToApproval = sendToApproval.map((task) =>
@@ -19,8 +19,12 @@ const AdminDashboard = () => {
 				  }
 				: task
 		);
-		setSendToApproval(tasksToApproval);
+		setSendToApproval(tasksToApproval.totalValue);
 	};
+
+	
+
+	console.log(paymentRequest.totalValue);
 
 	return (
 		<VStack 
@@ -117,10 +121,29 @@ const AdminDashboard = () => {
 						color={"teal.300"}>
 						Nenhuma tarefa para aprovar!
 					</Text>
+					{paymentRequest.totalValue && (
+        <VStack mt={6} width={{ base: "90%", md: "70%", lg: "30%" }}>
+          <Heading size="md">Solicitação de retirada</Heading>
+						<Card p={3} width={{ base: "100%", md: "70%", lg: "30%" }} textAlign={"center"}>
+							<Text>Usuário: {paymentRequest.userName}</Text>
+							<Text>Valor: R$ {paymentRequest.totalValue}</Text>
+							<Button
+								m={'auto'}
+								colorScheme="green"
+								disabled={paymentRequest.totalValue ? false : true}
+								onClick={() => handleWithdrawal()}
+							>
+								Pagar
+							</Button>
+						</Card>
+				</VStack>
+					)}
 				</Flex>
 			)}
+			{/* Histórico de Solicitações */}
 		</VStack>
+     
 	);
-};
+}
 
 export default AdminDashboard;
