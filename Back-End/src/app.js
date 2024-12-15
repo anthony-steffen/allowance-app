@@ -13,14 +13,14 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); // Middleware to parse JSON
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'https://allowance-app-ten.vercel.app'], // URL do front-end
-  credentials: true, // Permite envio de cookies
-}));
 // app.use(cors({
-//   origin: 'https://allowance-app-ten.vercel.app', // URL do front-end
+//   origin: ['http://localhost:5173', 'https://allowance-app-ten.vercel.app'], // URL do front-end
 //   credentials: true, // Permite envio de cookies
 // }));
+app.use(cors({
+  origin: 'https://allowance-app-ten.vercel.app', // URL do front-end
+  credentials: true, // Permite envio de cookies
+}));
 app.use(cookieParser()); // Middleware to parse cookies
 app.use('/auth', authRoutes); // Middleware to use authRoutes
 app.use('/tasks', taskRoutes); // Middleware to use taskRoutes
