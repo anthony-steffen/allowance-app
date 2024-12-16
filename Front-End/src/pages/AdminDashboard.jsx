@@ -3,6 +3,7 @@ import TaskContext from "../context/taskContext";
 import { useColorMode, Text, Flex, Heading, List, Button, VStack, Card } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
+import { API } from "../services/api";
 
 const AdminDashboard = () => {
 	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal } =
@@ -10,21 +11,32 @@ const AdminDashboard = () => {
 	const { colorMode } = useColorMode();
 
 
-	const hundleToggleAproveTask = (taskId) => {
+	const hundleToggleAproveTask = async (taskId) => {
+		await API.patch(`/tasks/${taskId}/toggle`);
+
 		const tasksToApproval = sendToApproval.map((task) =>
 			task.id === taskId
 				? {
 						...task,
 						status: task.status === "completed" ? "pending" : "completed",
-				  }
+				}
 				: task
 		);
-		setSendToApproval(tasksToApproval.totalValue);
+		setSendToApproval(tasksToApproval);
 	};
 
-	
+	// 	const tasksToApproval = sendToApproval.map((task) =>
+	// 		task.id === taskId
+	// 			? {
+	// 					...task,
+	// 					status: task.status === "completed" ? "pending" : "completed",
+	// 			  }
+	// 			: task
+	// 	);
+	// 	setSendToApproval(tasksToApproval.totalValue);
+	// };
 
-	console.log(paymentRequest.totalValue);
+	// console.log(paymentRequest.totalValue);
 
 	return (
 		<VStack 

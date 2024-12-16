@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
 	VStack,
 	CircularProgress,
@@ -17,7 +17,6 @@ import {
 
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 import TaskContext from "../context/taskContext";
-import { API } from "../services/api";
 import UserDashboard from "../components/UserDashboard";
 
 const Home = () => {
@@ -27,16 +26,17 @@ const Home = () => {
 		sendToApproval,
 		setSendToApproval,
 		tasksLoadedToday,
-		setTasksLoadedToday,
+		handleLoadTasks,
 		handleToggleTask,
 		handleCompleteAllTasks,
 		approvedTasks,
+		loading,
 	} = useContext(TaskContext);
 
 	const today = new Date().toLocaleDateString("pt-BR");
 	const toast = useToast();
 	const { colorMode } = useColorMode();
-	const [loading, setLoading] = useState(false);
+	// const [loading, setLoading] = useState(false);
 
 	const completedTasks = tasks.filter((task) => task.status === "completed");
 	const totalCompletedTasks = completedTasks.reduce((acc, task) => acc + task.value, 0);
@@ -46,25 +46,25 @@ const Home = () => {
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
 		console.log(sendValues);
-	const handleLoadTasks = async () => {
-		try {
-			setLoading(true);
-			const response = await API.get("/tasks");
-			const apiTasks = response.data;
-			setTasks(apiTasks);
-			localStorage.setItem("tasks", JSON.stringify(apiTasks));
-			setTasksLoadedToday(today);
-		} catch (error) {
-			toast({
-				title: "Erro ao carregar tarefas.",
-				description: error.message,
-				status: "error",
-				duration: 3000,
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
+	// const handleLoadTasks = async () => {
+	// 	try {
+	// 		setLoading(true);
+	// 		const response = await API.get("/tasks");
+	// 		const apiTasks = response.data;
+	// 		setTasks(apiTasks);
+	// 		localStorage.setItem("tasks", JSON.stringify(apiTasks));
+	// 		setTasksLoadedToday(today);
+	// 	} catch (error) {
+	// 		toast({
+	// 			title: "Erro ao carregar tarefas.",
+	// 			description: error.message,
+	// 			status: "error",
+	// 			duration: 3000,
+	// 		});
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
 
 	const handleApprovalRequest = () => {
 		setSendToApproval(tasks);

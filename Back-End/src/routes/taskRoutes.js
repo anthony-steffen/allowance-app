@@ -10,7 +10,8 @@ const {
   getDailyTasks,
   toggleTaskCompletion,
   completeAllTasks,
-  requestTaskApproval,
+  requestTaskApproval
+
 }
   = require('../controllers/taskController');
 
@@ -26,7 +27,7 @@ router.delete('/:id', authenticate, deleteTask); // Deleta tarefa por id, requer
 //Rotas funcionais
 router.get('/daily',authenticate, getDailyTasks);
 router.patch('/:id/toggle', toggleTaskCompletion);
-router.post('/complete-all', authenticate, completeAllTasks);
-router.post('/request-approval', requestTaskApproval);
+router.post('/complete-all', completeAllTasks);
+router.post('/approval', requestTaskApproval);
 
 module.exports = router;

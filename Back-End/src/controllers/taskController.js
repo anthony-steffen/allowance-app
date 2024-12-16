@@ -1,4 +1,5 @@
 const { Task } = require('../models');
+const {Punishment} = require('../models');
 
 // Criar uma nova tarefa
 const createTask = async (req, res) => {
@@ -127,30 +128,36 @@ const completeAllTasks = async (_req, res) => {
 };
 
   
-
-// Solicitar aprovação das tarefas concluídas do dia
+// Solicitar aprovação das tarefas concluídas e penalidades adicionadas
 const requestTaskApproval = async (req, res) => {
+ 
   try {
-    const { userId } = req.user;
-    const today = new Date().toISOString().split('T')[0];
-
-    // Simula registro de uma solicitação de aprovação (pode ser salvo em uma tabela separada)
+    // Buscar todas as tarefas concluídas
     const completedTasks = await Task.findAll({
-      where: { userId, status: 'completed', dueDate: today },
+      where: { status: 'completed' },
+      attributes: ['id', 'title', 'description', 'value', 'dueDate', 'status'],
     });
 
-    if (completedTasks.length === 0) {
-      return res.status(400).json({ message: 'Nenhuma tarefa concluída para aprovar hoje.' });
-    }
+    // Buscar todas as penalidades
+   const punishment = await Punishment.findAll({
+     where: { add: true },
+     attributes: ['id', 'describe', 'value', 'add', 'dueDate'],
+    });
 
-    res.status(200).json({
-      message: 'Solicitação de aprovação registrada!',
+    const requestToApproval = [...completedTasks, ...punishment];
+    // Simular o envio da aprovação (exemplo de objeto estruturado para envio)
+    const approvalRequest = {
       tasks: completedTasks,
-    });
-  } catch (error) {
+      penalties: punishment,
+    };
+
+    res.status(200).json(approvalRequest);
+  }
+  catch (error) {
     res.status(500).json({ message: 'Erro ao solicitar aprovação.', error });
   }
-};
+}
+ 
 
 
 module.exports = {
