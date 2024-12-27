@@ -3,17 +3,14 @@ import TaskContext from "../context/taskContext";
 import { useColorMode, Text, Flex, Heading, List, Button, VStack, Card } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
-import { API } from "../services/api";
+// import { API } from "../services/api";
 
 const AdminDashboard = () => {
-	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal } =
+	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal } =
 		useContext(TaskContext);
 	const { colorMode } = useColorMode();
 
-
-	const hundleToggleAproveTask = async (taskId) => {
-		await API.patch(`/tasks/${taskId}/toggle`);
-
+  const handleToggleTask = (taskId) => {
 		const tasksToApproval = sendToApproval.map((task) =>
 			task.id === taskId
 				? {
@@ -24,6 +21,19 @@ const AdminDashboard = () => {
 		);
 		setSendToApproval(tasksToApproval);
 	};
+	// const hundleToggleAproveTask = async (taskId) => {
+	// 	await API.patch(`/tasks/${taskId}/toggle`);
+
+	// 	const tasksToApproval = sendToApproval.map((task) =>
+	// 		task.id === taskId
+	// 			? {
+	// 					...task,
+	// 					status: task.status === "completed" ? "pending" : "completed",
+	// 			}
+	// 			: task
+	// 	);
+	// 	setSendToApproval(tasksToApproval);
+	// };
 
 	// 	const tasksToApproval = sendToApproval.map((task) =>
 	// 		task.id === taskId
@@ -84,7 +94,7 @@ const AdminDashboard = () => {
 											<CheckCircleIcon
 												color="green.500"
 												boxSize={{ base: 5, md: 6 }}
-												onClick={() => hundleToggleAproveTask(task.id)}
+												onClick={() => handleToggleTask(task.id)}
 											/>
 											<Text fontSize={"sm"}> Aprovada</Text>
 										</VStack>
@@ -93,7 +103,7 @@ const AdminDashboard = () => {
 											<CloseIcon
 												color="red.500"
 												boxSize={{ base: 5, md: 6 }}
-												onClick={() => hundleToggleAproveTask(task.id)}
+												onClick={() => handleToggleTask(task.id)}
 											/>
 											<Text fontSize={"sm"}>Reprovada</Text>
 										</VStack>

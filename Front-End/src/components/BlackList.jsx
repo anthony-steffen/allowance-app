@@ -8,12 +8,13 @@ import {
 	Card,
 	Button,
 	VStack,
+	Box,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { API } from "../services/api";
 
 const BlackList = () => {
-	const { handleLoadPenalties, penalties,setPenalties } = useContext(TaskContext);
+	const { handleLoadPenalties, penalties, setPenalties } = useContext(TaskContext);
 
 	const mode = useColorMode();
 
@@ -57,22 +58,31 @@ const BlackList = () => {
 						color={"red.400"}>
 						Penalidades
 					</Text>
-					<Stack>
+					<Stack width={{ base: "100%" }} mx="auto" mt={4}>
 						{penalties.map((penalty) => (
 							<Card key={penalty.id} p={4} width={{ base: "100%" }}>
-								<Flex justify="space-between">
-									<Text fontSize="lg">{penalty.describe}</Text>
-
+								<Flex justify="space-between" align="center">
+									<Box width="70%">
+									<Text fontSize="md">{penalty.describe}</Text>
+									</Box>
+									<Box width="15%">
+									<Text fontSize="md">{`R$ ${penalty.value.toFixed(2)}`}</Text>
+									</Box>
+									
 									{penalty.add ? (
+									<Box width="5%">
 										<DeleteIcon
 											onClick={() => togglePenalty(penalty.id)}
 											color={"red.400"}
 										/>
+										</Box>
 									) : (
+										<Box width="5%">
 										<AddIcon
 											onClick={() => togglePenalty(penalty.id)}
 											color={"green.400"}
 										/>
+										</Box>
 									)}
 								</Flex>
 							</Card>

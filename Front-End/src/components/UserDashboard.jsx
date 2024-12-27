@@ -3,9 +3,10 @@ import TaskContext from "../context/taskContext";
 import { Button, Box, Text, Card } from "@chakra-ui/react";
 
 const UserDashboard = () => {
-  const { approvedTasks, handleRequestPayment } = useContext(TaskContext);
+  const { approvedTasks, handleRequestPayment, paymentRequest } = useContext(TaskContext);
 
-  const totalValue = approvedTasks.reduce((acc, task) => acc + task.netValue, 0);
+  const totalValue = paymentRequest.reduce((acc, task) => acc + task.netValue, 0);
+  console.log(approvedTasks.map((task) => task.tasks));
 
   return (
       <Card

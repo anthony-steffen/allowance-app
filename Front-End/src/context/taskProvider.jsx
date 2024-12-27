@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import TaskContext from "./taskContext";
 import { useToast } from "@chakra-ui/react";
-import {API} from "../services/api";
+import { API } from "../services/api";
 // import { punishments } from "../shared/punishments";
 
 const { Provider } = TaskContext;
@@ -15,12 +15,12 @@ export const TaskProvider = ({ children }) => {
 		// Recupera as tarefas do localStorage ou usa um array vazio
 		const storedTasks = localStorage.getItem("tasks");
 		return storedTasks ? JSON.parse(storedTasks) : [];
-  });
+	});
 
 	const [sendToApproval, setSendToApproval] = useState(() => {
 		// Recupera o estado de "sendToApproval" do localStorage ou usa "false"
 		const storedSendToApproval = localStorage.getItem("sendToApproval");
-    return storedSendToApproval ? JSON.parse(storedSendToApproval) : false;
+		return storedSendToApproval ? JSON.parse(storedSendToApproval) : false;
 	});
 
 	const [tasksLoadedToday, setTasksLoadedToday] = useState(() => {
@@ -78,9 +78,9 @@ export const TaskProvider = ({ children }) => {
 	// Limpa o timeout
 	useEffect(() => {
 		return () => clearInterval(checkNewDay);
-	}
-	, [tasksLoadedToday, checkNewDay]);
+	}, [tasksLoadedToday, checkNewDay]);
 
+	// Carregar tarefas
 	const handleLoadTasks = useCallback(async () => {
 		const today = getTodayDate();
 		try {
@@ -102,12 +102,12 @@ export const TaskProvider = ({ children }) => {
 		}
 	}, [toast]);
 
+	// Carregar punições
 	const handleLoadPenalties = useCallback(async () => {
 		try {
 			const response = await API.get("/punishments");
 			const penaltiesApi = response.data;
 			setPenalties(penaltiesApi);
-			
 		} catch (error) {
 			toast({
 				title: "Erro ao carregar punições.",
@@ -120,56 +120,82 @@ export const TaskProvider = ({ children }) => {
 		}
 	}, [toast]);
 
-
-	//Toggle para aprovar/reprovar tarefas
-	const handleToggleTask = useCallback(async (taskId) => {
-		try {
-			await API.patch(`/tasks/${taskId}/toggle`);
-			setTasks((prevTasks) =>
-				prevTasks.map((task) =>
+	// //Toggle para aprovar/reprovar tarefas
+	const handleToggleTask = useCallback(
+		(taskId) => {
+			try {
+				const tasksToApproval = tasks.map((task) =>
 					task.id === taskId
 						? {
 								...task,
 								status: task.status === "completed" ? "pending" : "completed",
-						}
+						  }
 						: task
-				));
-		} catch (error) {
-			toast({
-				title: "Erro ao atualizar tarefa.",
-				description: error.message,
-				status: "error",
-				duration: 3000,
-				position: "bottom",
-			});
-		}
-	}, [toast]);
+				);
+				setTasks(tasksToApproval);
+			} catch (error) {
+				toast({
+					title: "Erro ao atualizar tarefa.",
+					description: error.message,
+					status: "error",
+					duration: 3000,
+					position: "bottom",
+				});
+			}
+		},
+		[toast, tasks]
+	);
+
+	// const handleToggleTask = useCallback(async (taskId) => {
+	// 	try {
+	// 		await API.patch(`/tasks/${taskId}/toggle`);
+	// 		setTasks((prevTasks) =>
+	// 			prevTasks.map((task) =>
+	// 				task.id === taskId
+	// 					? {
+	// 							...task,
+	// 							status: task.status === "completed" ? "pending" : "completed",
+	// 					}
+	// 					: task
+	// 			));
+	// 	} catch (error) {
+	// 		toast({
+	// 			title: "Erro ao atualizar tarefa.",
+	// 			description: error.message,
+	// 			status: "error",
+	// 			duration: 3000,
+	// 			position: "bottom",
+	// 		});
+	// 	}
+	// }, [toast]);
 
 	// Toogle para incluir/remover penalidades
-	const togglePenalty = useCallback(async (penaltyId) => {
-    try {
-			await API.patch(`/punishment/${penaltyId}/toggle`);
-			setPenalties((prevPenalties) =>
-				prevPenalties.map((penalty) =>
-					penalty.id === penaltyId
-						? { ...penalty, add: !penalty.add }
-						: penalty
-				)
-			);
-		} catch (error) {
-			toast({
-				title: "Erro ao atualizar penalidade.",
-				description: error.message,
-				status: "error",
-				duration: 3000,
-				position: "bottom",
-			});
-		}
-	}, [toast]);
-
+	const togglePenalty = useCallback(
+		async (penaltyId) => {
+			try {
+				await API.patch(`/punishment/${penaltyId}/toggle`);
+				setPenalties((prevPenalties) =>
+					prevPenalties.map((penalty) =>
+						penalty.id === penaltyId
+							? { ...penalty, add: !penalty.add }
+							: penalty
+					)
+				);
+			} catch (error) {
+				toast({
+					title: "Erro ao atualizar penalidade.",
+					description: error.message,
+					status: "error",
+					duration: 3000,
+					position: "bottom",
+				});
+			}
+		},
+		[toast]
+	);
 
 	// Marcar todas as tarefas como concluídas
-	const handleCompleteAllTasks = useCallback( async () => {
+	const handleCompleteAllTasks = useCallback(async () => {
 		try {
 			await API.post("/tasks/complete-all");
 			setTasks((prevTasks) =>
@@ -193,27 +219,36 @@ export const TaskProvider = ({ children }) => {
 		}
 	}, [toast]);
 
-
 	// Enviar aprovação / Tarefas completadas + penalidades
 	const handleApproval = useCallback(async () => {
-		// const approved = tasks.filter((task) => task.status === "completed");
-		// const totalApprovedValue = approved.reduce((acc, task) => acc + task.value, 0);
-		// const activePenalties = penalties.filter((penalty) => penalty.include === true);
-		// const totalPenaltiesValue = activePenalties.reduce((acc, penalty) => acc + penalty.value, 0);
-	
-		// const netValue = totalApprovedValue - totalPenaltiesValue;
-	
-		// const approvalEntry = {
-		// 	date: getTodayDate(),
-		// 	tasks: approved,
-		// 	penalties: activePenalties,
-		// 	netValue,
-		// };
-	
 		try {
-			// Enviar dados para o back-end
-			const response = await API.post("/tasks/approval");
-			console.log(response.data);
+			// Buscar dados a serem enviados para aprovação
+			const tasks = sendToApproval.filter(
+				(task) => task.status === "completed"
+			);
+			const punishment = penalties.filter((penalty) => penalty.add === true);
+
+			// const totalApprovedValue = sendToApproval.reduce((acc, task) => acc + task.value, 0);
+			// const totalPenaltiesValue = penalties.reduce((acc, penalty) => acc + penalty.value, 0);
+			// const netValue = totalApprovedValue - totalPenaltiesValue;
+
+			const approvalEntry = [
+				{
+					date: getTodayDate(),
+					tasks,
+					penalties: punishment,
+					netValue:
+						tasks.reduce((acc, task) => acc + task.value, 0) -
+						punishment.reduce((acc, penalty) => acc + penalty.value, 0),
+				},
+			];
+
+			// Atualiza estados locais
+			setPaymentRequest(approvalEntry);
+			setApprovedTasks([]);
+			setTasks([]);
+			setPenalties([]);
+			setSendToApproval([]);
 		} catch (error) {
 			toast({
 				title: "Erro ao enviar aprovação.",
@@ -223,34 +258,22 @@ export const TaskProvider = ({ children }) => {
 				position: "bottom",
 			});
 		}
-	}, [toast]);
-	
-		// 	// Atualiza estados locais
-		// 	setApprovedTasks((prev) => [...prev, approvalEntry]);
-		// 	setTasks([]);
-		// 	setPenalties([]);
-		// 	setSendToApproval([]);
-	
-		// 	toast({
-		// 		title: "Solicitação enviada para aprovação.",
-		// 		description: `Você acumulou R$ ${netValue.toFixed(2)} hoje.`,
-		// 		status: "success",
-		// 		duration: 3000,
-		// 	});
-		// } catch (error) {
-		// 	toast({
-		// 		title: "Erro ao enviar aprovação.",
-		// 		description: error.message,
-		// 		status: "error",
-		// 		duration: 3000,
-		// 	});
-		// }
-		
-	
+	}, [
+		toast,
+		setApprovedTasks,
+		setTasks,
+		setPenalties,
+		setSendToApproval,
+		sendToApproval,
+		penalties,
+	]);
 
+	// console.log(paymentRequest.penalties);
+
+	// Solicitar pagamento
 	const handleRequestPayment = useCallback(() => {
-		const totalValue = approvedTasks.reduce((acc, task) => acc + task.netValue, 0).toFixed(2);
-	
+		const totalValue = paymentRequest.map((task) => task.netValue).reduce((acc, value) => acc + value, 0);
+
 		if (totalValue === 0) {
 			toast({
 				title: "Nenhum valor acumulado.",
@@ -261,17 +284,12 @@ export const TaskProvider = ({ children }) => {
 			});
 			return;
 		}
-	
-		const paymentRequest = {
-			approvedTasks,
-			totalValue,
-		};
-	
+
 		// Envia o pagamento à página de Admin (poderá ser persistido em um sistema real no futuro)
-		setPaymentRequest(paymentRequest);
-		localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
+		// setPaymentRequest(paymentRequest);
+		// localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
 		localStorage.removeItem("approvedTasks");
-	
+
 		toast({
 			title: "Solicitação enviada!",
 			description: `Você solicitou o pagamento de R$ ${totalValue}.`,
@@ -279,12 +297,11 @@ export const TaskProvider = ({ children }) => {
 			duration: 3000,
 			position: "top",
 		});
-	
+
 		// Zera as tarefas aprovadas
 		setApprovedTasks([]);
 	}, [approvedTasks, toast]);
 
-	
 	const handleWithdrawal = useCallback(() => {
 		setPaymentRequest([]);
 		localStorage.removeItem("paymentRequest");
@@ -295,10 +312,7 @@ export const TaskProvider = ({ children }) => {
 			duration: 3000,
 			position: "top",
 		});
-	}
-	, [toast]);
-	
-	
+	}, [toast]);
 
 	const store = useMemo(
 		() => ({
@@ -324,7 +338,6 @@ export const TaskProvider = ({ children }) => {
 			setPaymentRequest,
 			handleRequestPayment,
 			handleWithdrawal,
-
 		}),
 		[
 			tasks,
@@ -348,7 +361,7 @@ export const TaskProvider = ({ children }) => {
 			paymentRequest,
 			setPaymentRequest,
 			handleRequestPayment,
-			handleWithdrawal
+			handleWithdrawal,
 		]
 	);
 

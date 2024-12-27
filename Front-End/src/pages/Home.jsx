@@ -26,10 +26,10 @@ const Home = () => {
 		sendToApproval,
 		setSendToApproval,
 		tasksLoadedToday,
+		paymentRequest,
 		handleLoadTasks,
 		handleToggleTask,
 		handleCompleteAllTasks,
-		approvedTasks,
 		loading,
 	} = useContext(TaskContext);
 
@@ -40,12 +40,12 @@ const Home = () => {
 
 	const completedTasks = tasks.filter((task) => task.status === "completed");
 	const totalCompletedTasks = completedTasks.reduce((acc, task) => acc + task.value, 0);
-	const totalValue = approvedTasks.reduce( (acc, task) => acc + task.netValue, 0);
+	const totalValue = paymentRequest.reduce( (acc, task) => acc + task.netValue, 0);
 	const sendValues = tasks.reduce((acc, task) => acc + task.value, 0).toFixed(2);
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");	
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-		console.log(sendValues);
+		// console.log(paymentRequest.map((task) => task.netValue));
 	// const handleLoadTasks = async () => {
 	// 	try {
 	// 		setLoading(true);
