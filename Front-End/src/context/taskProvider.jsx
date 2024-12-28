@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import TaskContext from "./taskContext";
 import { useToast } from "@chakra-ui/react";
 import { API } from "../services/api";
-// import { punishments } from "../shared/punishments";
 
 const { Provider } = TaskContext;
 
@@ -154,29 +153,6 @@ export const TaskProvider = ({ children }) => {
 		[toast, tasks]
 	);
 
-	// const handleToggleTask = useCallback(async (taskId) => {
-	// 	try {
-	// 		await API.patch(`/tasks/${taskId}/toggle`);
-	// 		setTasks((prevTasks) =>
-	// 			prevTasks.map((task) =>
-	// 				task.id === taskId
-	// 					? {
-	// 							...task,
-	// 							status: task.status === "completed" ? "pending" : "completed",
-	// 					}
-	// 					: task
-	// 			));
-	// 	} catch (error) {
-	// 		toast({
-	// 			title: "Erro ao atualizar tarefa.",
-	// 			description: error.message,
-	// 			status: "error",
-	// 			duration: 3000,
-	// 			position: "bottom",
-	// 		});
-	// 	}
-	// }, [toast]);
-
 	// Toogle para incluir/remover penalidades
 	const togglePenalty = useCallback(
 		async (penaltyId) => {
@@ -205,7 +181,6 @@ export const TaskProvider = ({ children }) => {
 	// Marcar todas as tarefas como concluídas
 	const handleCompleteAllTasks = useCallback(async () => {
 		try {
-			// await API.post("/tasks/complete-all");
 			setTasks((prevTasks) =>
 				prevTasks.map((task) => ({ ...task, status: "completed" }))
 			);
@@ -235,10 +210,6 @@ export const TaskProvider = ({ children }) => {
 				(task) => task.status === "completed"
 			);
 			const punishment = penalties.filter((penalty) => penalty.add === true);
-
-			// const totalApprovedValue = sendToApproval.reduce((acc, task) => acc + task.value, 0);
-			// const totalPenaltiesValue = penalties.reduce((acc, penalty) => acc + penalty.value, 0);
-			// const netValue = totalApprovedValue - totalPenaltiesValue;
 
 			const approvalEntry = [
 				{
@@ -276,8 +247,6 @@ export const TaskProvider = ({ children }) => {
 		penalties,
 	]);
 
-	// console.log(paymentRequest.penalties);
-
 	// Solicitar pagamento
 	const handleRequestPayment = useCallback(() => {
 		const totalValue = paymentRequest.map((task) => task.netValue).reduce((acc, value) => acc + value, 0);
@@ -293,9 +262,6 @@ export const TaskProvider = ({ children }) => {
 			return;
 		}
 
-		// Envia o pagamento à página de Admin (poderá ser persistido em um sistema real no futuro)
-		// setPaymentRequest(paymentRequest);
-		// localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
 		localStorage.removeItem("approvedTasks");
 		setWithdrawal(true);
 
@@ -318,14 +284,6 @@ export const TaskProvider = ({ children }) => {
 		setSendToApproval([]);
 		setPaymentRequest([]);
 		setWithdrawal(false);
-
-		// localStorage.removeItem("tasks");
-		// localStorage.removeItem("tasksLoadedDate");
-		// localStorage.removeItem("sendToApproval");
-		// localStorage.removeItem("penalties");
-		// localStorage.removeItem("approvedTasks");
-		// localStorage.removeItem("paymentRequest");	
-		// localStorage.removeItem("withdrawal");
 		toast({
 			title: "Pagamento efetuado!",
 			description: "Pagamento foi efetuado com sucesso.",
