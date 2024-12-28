@@ -43,6 +43,12 @@ export const TaskProvider = ({ children }) => {
 		const storedPenalties = localStorage.getItem("penalties");
 		return storedPenalties ? JSON.parse(storedPenalties) : [];
 	});
+	
+	const [withdrawal, setWithdrawal] = useState(() => {
+		const storedWithdrawal = localStorage.getItem("withdrawal");
+		return storedWithdrawal ? JSON.parse(storedWithdrawal) : false;
+	});
+
 	const [loading, setLoading] = useState(false);
 
 	// Salva as tarefas, a data e outros estados no localStorage sempre que mudam
@@ -54,6 +60,7 @@ export const TaskProvider = ({ children }) => {
 		localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
 		localStorage.setItem("penalties", JSON.stringify(penalties));
 		localStorage.setItem("today", getTodayDate());
+		localStorage.setItem("withdrawal", JSON.stringify(withdrawal));
 	}, [
 		tasks,
 		tasksLoadedToday,
@@ -61,6 +68,7 @@ export const TaskProvider = ({ children }) => {
 		approvedTasks,
 		penalties,
 		paymentRequest,
+		withdrawal,
 	]);
 
 	// Monitora a chegada de um novo dia para limpar as tarefas
@@ -197,7 +205,7 @@ export const TaskProvider = ({ children }) => {
 	// Marcar todas as tarefas como concluídas
 	const handleCompleteAllTasks = useCallback(async () => {
 		try {
-			await API.post("/tasks/complete-all");
+			// await API.post("/tasks/complete-all");
 			setTasks((prevTasks) =>
 				prevTasks.map((task) => ({ ...task, status: "completed" }))
 			);
@@ -289,6 +297,7 @@ export const TaskProvider = ({ children }) => {
 		// setPaymentRequest(paymentRequest);
 		// localStorage.setItem("paymentRequest", JSON.stringify(paymentRequest));
 		localStorage.removeItem("approvedTasks");
+		setWithdrawal(true);
 
 		toast({
 			title: "Solicitação enviada!",
@@ -300,11 +309,23 @@ export const TaskProvider = ({ children }) => {
 
 		// Zera as tarefas aprovadas
 		setApprovedTasks([]);
-	}, [approvedTasks, toast]);
+	}, [toast, paymentRequest]);
 
 	const handleWithdrawal = useCallback(() => {
+		setTasks([]);
+		setApprovedTasks([]);
+		setPenalties([]);
+		setSendToApproval([]);
 		setPaymentRequest([]);
-		localStorage.removeItem("paymentRequest");
+		setWithdrawal(false);
+
+		// localStorage.removeItem("tasks");
+		// localStorage.removeItem("tasksLoadedDate");
+		// localStorage.removeItem("sendToApproval");
+		// localStorage.removeItem("penalties");
+		// localStorage.removeItem("approvedTasks");
+		// localStorage.removeItem("paymentRequest");	
+		// localStorage.removeItem("withdrawal");
 		toast({
 			title: "Pagamento efetuado!",
 			description: "Pagamento foi efetuado com sucesso.",
@@ -338,6 +359,8 @@ export const TaskProvider = ({ children }) => {
 			setPaymentRequest,
 			handleRequestPayment,
 			handleWithdrawal,
+			withdrawal,
+			setWithdrawal,
 		}),
 		[
 			tasks,
@@ -362,6 +385,8 @@ export const TaskProvider = ({ children }) => {
 			setPaymentRequest,
 			handleRequestPayment,
 			handleWithdrawal,
+			withdrawal,
+			setWithdrawal,
 		]
 	);
 

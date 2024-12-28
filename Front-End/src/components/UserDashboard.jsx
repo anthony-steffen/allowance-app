@@ -3,10 +3,10 @@ import TaskContext from "../context/taskContext";
 import { Button, Box, Text, Card } from "@chakra-ui/react";
 
 const UserDashboard = () => {
-  const { approvedTasks, handleRequestPayment, paymentRequest } = useContext(TaskContext);
+  const { approvedTasks, handleRequestPayment, paymentRequest, withdrawal } = useContext(TaskContext);
 
   const totalValue = paymentRequest.reduce((acc, task) => acc + task.netValue, 0);
-  console.log(approvedTasks.map((task) => task.tasks));
+  console.log(withdrawal);
 
   return (
       <Card
@@ -36,7 +36,7 @@ const UserDashboard = () => {
           w={{ base: "80%", md: "50%", lg: "50%" }}
           colorScheme="teal"
           onClick={() => handleRequestPayment()}
-          isDisabled={totalValue === 0}
+          isDisabled={withdrawal || totalValue === 0}
         >
           Solicitar Pagamento
         </Button>

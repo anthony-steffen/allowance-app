@@ -6,8 +6,9 @@ import BlackList from "../components/BlackList";
 // import { API } from "../services/api";
 
 const AdminDashboard = () => {
-	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal } =
+	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
 		useContext(TaskContext);
+
 	const { colorMode } = useColorMode();
 
   const handleToggleTask = (taskId) => {
@@ -143,16 +144,16 @@ const AdminDashboard = () => {
 						color={"teal.300"}>
 						Nenhuma tarefa para aprovar!
 					</Text>
-					{paymentRequest.totalValue && (
+					{paymentRequest.length > 0 && withdrawal === true && (
         <VStack mt={6} width={{ base: "90%", md: "70%", lg: "30%" }}>
           <Heading size="md">Solicitação de retirada</Heading>
 						<Card p={3} width={{ base: "100%", md: "70%", lg: "30%" }} textAlign={"center"}>
 							<Text>Usuário: {paymentRequest.userName}</Text>
-							<Text>Valor: R$ {paymentRequest.totalValue}</Text>
+							<Text>Valor: R$ {paymentRequest.filter((value) => value.netValue).reduce((acc, task) => acc + task.netValue, 0).toFixed(2)}</Text>
 							<Button
 								m={'auto'}
 								colorScheme="green"
-								disabled={paymentRequest.totalValue ? false : true}
+								disabled={paymentRequest.length === 0}
 								onClick={() => handleWithdrawal()}
 							>
 								Pagar
