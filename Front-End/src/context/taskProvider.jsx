@@ -205,29 +205,37 @@ export const TaskProvider = ({ children }) => {
 	// Enviar aprovação / Tarefas completadas + penalidades
 	const handleApproval = useCallback(async () => {
 		try {
-			// Buscar dados a serem enviados para aprovação
-			const tasks = sendToApproval.filter(
-				(task) => task.status === "completed"
-			);
+			const tasks = sendToApproval.filter((task) => task.status === "completed");
 			const punishment = penalties.filter((penalty) => penalty.add === true);
-
-			const approvalEntry = [
+			const tasksValue = tasks.reduce((acc, task) => acc + task.value, 0);
+			const punishmentValue = punishment.reduce((acc, penalty) => acc + penalty.value, 0);
+			const netValue = tasksValue - punishmentValue;
+	
+			const approvalEntry =
 				{
-					date: getTodayDate(),
+					date: new Date(),
 					tasks,
 					penalties: punishment,
-					netValue:
-						tasks.reduce((acc, task) => acc + task.value, 0) -
-						punishment.reduce((acc, penalty) => acc + penalty.value, 0),
-				},
-			];
+					netValue,
+				}
 
+			// Enviar dados ao back-end
+			await API.post("/approvals", approvalEntry);
+	
 			// Atualiza estados locais
-			setPaymentRequest(approvalEntry);
+			setPaymentRequest([approvalEntry]);
 			setApprovedTasks([]);
 			setTasks([]);
 			setPenalties([]);
 			setSendToApproval([]);
+	
+			toast({
+				title: "Aprovação enviada!",
+				description: "Os dados foram enviados com sucesso.",
+				status: "success",
+				duration: 3000,
+				position: "bottom",
+			});
 		} catch (error) {
 			toast({
 				title: "Erro ao enviar aprovação.",
@@ -237,20 +245,58 @@ export const TaskProvider = ({ children }) => {
 				position: "bottom",
 			});
 		}
-	}, [
-		toast,
-		setApprovedTasks,
-		setTasks,
-		setPenalties,
-		setSendToApproval,
-		sendToApproval,
-		penalties,
-	]);
+	}, [toast, setApprovedTasks, setTasks, setPenalties, setSendToApproval, sendToApproval, penalties]);
+
+	// const handleApproval = useCallback(async () => {
+	// 	try {
+	// 		// Buscar dados a serem enviados para aprovação
+	// 		const tasks = sendToApproval.filter(
+	// 			(task) => task.status === "completed"
+	// 		);
+	// 		const punishment = penalties.filter((penalty) => penalty.add === true);
+
+	// 		const approvalEntry = [
+	// 			{
+	// 				date: getTodayDate(),
+	// 				tasks,
+	// 				penalties: punishment,
+	// 				netValue:
+	// 					tasks.reduce((acc, task) => acc + task.value, 0) -
+	// 					punishment.reduce((acc, penalty) => acc + penalty.value, 0),
+	// 			},
+	// 		];
+
+	// 		// Atualiza estados locais
+	// 		setPaymentRequest(approvalEntry);
+	// 		setApprovedTasks([]);
+	// 		setTasks([]);
+	// 		setPenalties([]);
+	// 		setSendToApproval([]);
+	// 	} catch (error) {
+	// 		toast({
+	// 			title: "Erro ao enviar aprovação.",
+	// 			description: error.message,
+	// 			status: "error",
+	// 			duration: 3000,
+	// 			position: "bottom",
+	// 		});
+	// 	}
+	// }, [
+	// 	toast,
+	// 	setApprovedTasks,
+	// 	setTasks,
+	// 	setPenalties,
+	// 	setSendToApproval,
+	// 	sendToApproval,
+	// 	penalties,
+	// ]);
 
 	// Solicitar pagamento
-	const handleRequestPayment = useCallback(() => {
-		const totalValue = paymentRequest.map((task) => task.netValue).reduce((acc, value) => acc + value, 0);
-
+	const handleRequestPayment = useCallback(async () => {
+		const totalValue = paymentRequest
+			.map((task) => task.netValue)
+			.reduce((acc, value) => acc + value, 0);
+	
 		if (totalValue === 0) {
 			toast({
 				title: "Nenhum valor acumulado.",
@@ -261,21 +307,63 @@ export const TaskProvider = ({ children }) => {
 			});
 			return;
 		}
-
-		localStorage.removeItem("approvedTasks");
-		setWithdrawal(true);
-
-		toast({
-			title: "Solicitação enviada!",
-			description: `Você solicitou o pagamento de R$ ${totalValue}.`,
-			status: "success",
-			duration: 3000,
-			position: "top",
-		});
-
-		// Zera as tarefas aprovadas
-		setApprovedTasks([]);
+	
+		try {
+			// Enviar solicitação de pagamento ao back-end
+			// await axios.post("http://localhost:5000/payment-request", { totalValue });
+			await API.post("/payment-request", { totalValue });
+	
+			// Remove dados locais e atualiza estados
+			localStorage.removeItem("approvedTasks");
+			setWithdrawal(true);
+			setApprovedTasks([]);
+	
+			toast({
+				title: "Solicitação enviada!",
+				description: `Você solicitou o pagamento de R$ ${totalValue}.`,
+				status: "success",
+				duration: 3000,
+				position: "top",
+			});
+		} catch (error) {
+			toast({
+				title: "Erro ao solicitar pagamento.",
+				description: error.message,
+				status: "error",
+				duration: 3000,
+				position: "top",
+			});
+		}
 	}, [toast, paymentRequest]);
+	
+	// const handleRequestPayment = useCallback(() => {
+	// 	const totalValue = paymentRequest.map((task) => task.netValue).reduce((acc, value) => acc + value, 0);
+
+	// 	if (totalValue === 0) {
+	// 		toast({
+	// 			title: "Nenhum valor acumulado.",
+	// 			description: "Você ainda não realizou nenhuma tarefa aprovada.",
+	// 			status: "error",
+	// 			duration: 3000,
+	// 			position: "top",
+	// 		});
+	// 		return;
+	// 	}
+
+	// 	localStorage.removeItem("approvedTasks");
+	// 	setWithdrawal(true);
+
+	// 	toast({
+	// 		title: "Solicitação enviada!",
+	// 		description: `Você solicitou o pagamento de R$ ${totalValue}.`,
+	// 		status: "success",
+	// 		duration: 3000,
+	// 		position: "top",
+	// 	});
+
+	// 	// Zera as tarefas aprovadas
+	// 	setApprovedTasks([]);
+	// }, [toast, paymentRequest]);
 
 	const handleWithdrawal = useCallback(() => {
 		setTasks([]);
