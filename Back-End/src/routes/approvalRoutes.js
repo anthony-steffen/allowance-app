@@ -1,5 +1,5 @@
 const express = require('express');
-const { createApproval } = require('../controllers/approvalController');
+const { createApproval, sendApprovalRequest} = require('../controllers/approvalController');
 
 const router = express.Router();
 
@@ -9,5 +9,8 @@ const router = express.Router();
 
 // Rota para criar uma nova aprovação
 router.post('/', createApproval);
+
+// Rota para enviar uma solicitação de aprovação
+router.post('/request', sendApprovalRequest);
 
 module.exports = router;

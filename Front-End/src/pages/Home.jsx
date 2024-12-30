@@ -18,6 +18,7 @@ import {
 import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 import TaskContext from "../context/taskContext";
 import UserDashboard from "../components/UserDashboard";
+import { API } from "../services/api";
 
 const Home = () => {
 	const {
@@ -36,7 +37,6 @@ const Home = () => {
 	const today = new Date().toLocaleDateString("pt-BR");
 	const toast = useToast();
 	const { colorMode } = useColorMode();
-	// const [loading, setLoading] = useState(false);
 
 	const completedTasks = tasks.filter((task) => task.status === "completed");
 	const totalCompletedTasks = completedTasks.reduce((acc, task) => acc + task.value, 0);
@@ -45,39 +45,42 @@ const Home = () => {
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");	
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-		// console.log(paymentRequest.map((task) => task.netValue));
-	// const handleLoadTasks = async () => {
-	// 	try {
-	// 		setLoading(true);
-	// 		const response = await API.get("/tasks");
-	// 		const apiTasks = response.data;
-	// 		setTasks(apiTasks);
-	// 		localStorage.setItem("tasks", JSON.stringify(apiTasks));
-	// 		setTasksLoadedToday(today);
-	// 	} catch (error) {
-	// 		toast({
-	// 			title: "Erro ao carregar tarefas.",
-	// 			description: error.message,
-	// 			status: "error",
-	// 			duration: 3000,
-	// 		});
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
+	
 
-	const handleApprovalRequest = () => {
-		setSendToApproval(tasks);
-		setTasks([]);
-		// Salva a data de aprovação no localStorage
-		localStorage.setItem("approvalDate", today);
-		toast({
-			title: "Solicitação enviada para aprovação.",
-			description: `Você acumulou R$ ${totalCompletedTasks.toFixed(2)} hoje.`,
-			status: "success",
-			duration: 3000,
-		});
-	};
+	// const handleApprovalRequest = async () => {
+	// 	setSendToApproval(tasks);
+	// 	setTasks([]);
+	// 	// Salva a data de aprovação no localStorage
+	// 	localStorage.setItem("approvalDate", today);
+	// 	toast({
+	// 		title: "Solicitação enviada para aprovação.",
+	// 		description: `Você acumulou R$ ${totalCompletedTasks.toFixed(2)} hoje.`,
+	// 		status: "success",
+	// 		duration: 3000,
+	// 	});
+	// };
+	
+	const handleApprovalRequest = async () => {
+		try {
+			const { data } = await API.post("/approvals/request", { tasks: completedTasks });
+			setTasks([]);
+			setSendToApproval(data.approval.tasks);
+			localStorage.setItem("approvalDate", today);
+			toast({
+				title: "Solicitação enviada para aprovação.",
+				description: `Você acumulou R$ ${totalCompletedTasks.toFixed(2)} hoje.`,
+				status: "success",
+				duration: 3000,
+			});
+		} catch (error) {
+			toast({
+				title: "Erro ao enviar solicitação de aprovação.",
+				description: error.message,
+				status: "error",
+				duration: 3000,
+			});
+		}
+	}
 
 	return (
 		<VStack p={2} width={{ base: "100%" }} mx="auto" flexDir={"column"}>

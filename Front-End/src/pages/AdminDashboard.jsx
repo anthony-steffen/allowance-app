@@ -3,7 +3,6 @@ import TaskContext from "../context/taskContext";
 import { useColorMode, Text, Flex, Heading, List, Button, VStack, Card } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
-// import { API } from "../services/api";
 
 const AdminDashboard = () => {
 	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
@@ -22,32 +21,6 @@ const AdminDashboard = () => {
 		);
 		setSendToApproval(tasksToApproval);
 	};
-	// const hundleToggleAproveTask = async (taskId) => {
-	// 	await API.patch(`/tasks/${taskId}/toggle`);
-
-	// 	const tasksToApproval = sendToApproval.map((task) =>
-	// 		task.id === taskId
-	// 			? {
-	// 					...task,
-	// 					status: task.status === "completed" ? "pending" : "completed",
-	// 			}
-	// 			: task
-	// 	);
-	// 	setSendToApproval(tasksToApproval);
-	// };
-
-	// 	const tasksToApproval = sendToApproval.map((task) =>
-	// 		task.id === taskId
-	// 			? {
-	// 					...task,
-	// 					status: task.status === "completed" ? "pending" : "completed",
-	// 			  }
-	// 			: task
-	// 	);
-	// 	setSendToApproval(tasksToApproval.totalValue);
-	// };
-
-	// console.log(paymentRequest.totalValue);
 
 	return (
 		<VStack 
@@ -163,7 +136,6 @@ const AdminDashboard = () => {
 					)}
 				</Flex>
 			)}
-			{/* Histórico de Solicitações */}
 		</VStack>
      
 	);
