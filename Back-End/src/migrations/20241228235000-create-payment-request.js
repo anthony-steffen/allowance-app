@@ -12,9 +12,6 @@ module.exports = {
       value: {
         type: Sequelize.FLOAT
       },
-      requestedAt: {
-        type: Sequelize.DATE
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

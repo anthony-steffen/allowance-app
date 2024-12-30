@@ -63,7 +63,7 @@ const BlackList = () => {
 							<Card key={penalty.id} p={4} width={{ base: "100%" }}>
 								<Flex justify="space-between" align="center">
 									<Box width="70%">
-									<Text fontSize="md">{penalty.describe}</Text>
+									<Text fontSize="md">{penalty.title}</Text>
 									</Box>
 									<Box width="15%">
 									<Text fontSize="md">{`R$ ${penalty.value.toFixed(2)}`}</Text>

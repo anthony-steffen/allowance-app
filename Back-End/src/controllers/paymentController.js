@@ -2,10 +2,10 @@ const { PaymentRequest } = require('../models');
 
 const createPaymentRequest = async (req, res) => {
   try {
-    const { totalValue } = req.body;
+    const { value } = req.body;
 
     // Registrar solicitação no banco de dados (exemplo com Sequelize)
-    const payment = await PaymentRequest.create({ value: totalValue, requestedAt: new Date() });
+    const payment = await PaymentRequest.create({ value });
 
     res.status(201).json({ message: "Solicitação de pagamento registrada com sucesso.", payment });
   } catch (error) {

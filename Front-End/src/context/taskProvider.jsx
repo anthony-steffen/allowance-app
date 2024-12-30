@@ -310,8 +310,7 @@ export const TaskProvider = ({ children }) => {
 	
 		try {
 			// Enviar solicitação de pagamento ao back-end
-			// await axios.post("http://localhost:5000/payment-request", { totalValue });
-			await API.post("/payment-request", { totalValue });
+			await API.post("/payments-request", { totalValue });
 	
 			// Remove dados locais e atualiza estados
 			localStorage.removeItem("approvedTasks");

@@ -2,9 +2,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   const paymentRequest = sequelize.define('PaymentRequest', {
-    date: DataTypes.DATE,
-    totalValue: DataTypes.FLOAT,
-    status: DataTypes.STRING,
+    value: DataTypes.FLOAT,
   }, {
     timestamps: true,
     tableName: 'PaymentRequests',
