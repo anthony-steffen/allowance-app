@@ -6,6 +6,8 @@ const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const userRoutes = require('./routes/userRoutes');
 const punishmentsRoutes = require('./routes/punishmentsRoutes');
+const approvalRoutes = require('./routes/approvalRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use('/auth', authRoutes); // Middleware to use authRoutes
 app.use('/tasks', taskRoutes); // Middleware to use taskRoutes
 app.use('/users', userRoutes); // Middleware to use userRoutes
 app.use('/punishments', punishmentsRoutes); // Middleware to use punishmentsRoutes
+app.use('/approvals', approvalRoutes); // Middleware to use approvalRoutes
+app.use('/payments-request', paymentRoutes); // Middleware to use paymentRoutes
 
 
 // Route Test - GET
