@@ -247,50 +247,6 @@ export const TaskProvider = ({ children }) => {
 		}
 	}, [toast, setApprovedTasks, setTasks, setPenalties, setSendToApproval, sendToApproval, penalties]);
 
-	// const handleApproval = useCallback(async () => {
-	// 	try {
-	// 		// Buscar dados a serem enviados para aprovação
-	// 		const tasks = sendToApproval.filter(
-	// 			(task) => task.status === "completed"
-	// 		);
-	// 		const punishment = penalties.filter((penalty) => penalty.add === true);
-
-	// 		const approvalEntry = [
-	// 			{
-	// 				date: getTodayDate(),
-	// 				tasks,
-	// 				penalties: punishment,
-	// 				netValue:
-	// 					tasks.reduce((acc, task) => acc + task.value, 0) -
-	// 					punishment.reduce((acc, penalty) => acc + penalty.value, 0),
-	// 			},
-	// 		];
-
-	// 		// Atualiza estados locais
-	// 		setPaymentRequest(approvalEntry);
-	// 		setApprovedTasks([]);
-	// 		setTasks([]);
-	// 		setPenalties([]);
-	// 		setSendToApproval([]);
-	// 	} catch (error) {
-	// 		toast({
-	// 			title: "Erro ao enviar aprovação.",
-	// 			description: error.message,
-	// 			status: "error",
-	// 			duration: 3000,
-	// 			position: "bottom",
-	// 		});
-	// 	}
-	// }, [
-	// 	toast,
-	// 	setApprovedTasks,
-	// 	setTasks,
-	// 	setPenalties,
-	// 	setSendToApproval,
-	// 	sendToApproval,
-	// 	penalties,
-	// ]);
-
 	// Solicitar pagamento
 	const handleRequestPayment = useCallback(async () => {
 		const totalValue = paymentRequest

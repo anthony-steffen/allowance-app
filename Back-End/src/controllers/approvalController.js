@@ -1,5 +1,16 @@
 const { Approval, SendToApproval } = require('../models');
 
+// Função para Buscar todas as aprovações
+const getApprovals = async (_req, res) => {
+  try {
+    const approvals = await Approval.findAll();
+    res.status(200).json(approvals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao buscar aprovações', message: error.message });
+  }
+}
+
 // Função para criar uma nova aprovação
 const createApproval = async (req, res) => {
   try {
@@ -24,15 +35,4 @@ const sendApprovalRequest = async (req, res) => {
   }
 }
 
-// Função para remover todos os registros de aprovação
-const deleteAllApprovals = async (req, res) => {
-  try {
-    await Approval.destroy({ where: {} });
-    res.status(200).json({ message: 'Registros de aprovação removidos com sucesso' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao remover registros de aprovação', message: error.message });
-  }
-}
-
-module.exports = { createApproval,sendApprovalRequest };
+module.exports = { createApproval,sendApprovalRequest, getApprovals };

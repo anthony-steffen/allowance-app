@@ -1,14 +1,26 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import TaskContext from "../context/taskContext";
 import { useColorMode, Text, Flex, Heading, List, Button, VStack, Card } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
+import {API} from "../services/api";
 
 const AdminDashboard = () => {
 	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
 		useContext(TaskContext);
 
 	const { colorMode } = useColorMode();
+
+	// Função para carregar as tarefas aprovadas na tabela SendToApproval
+	const handleLoadApproval = useCallback(async () => {
+		const response = await API.get("/approvals");
+		const data = await response.json();
+		setSendToApproval(data);
+	}, [setSendToApproval]);
+	
+	onload = () => {
+		handleLoadApproval();
+	};
 
   const handleToggleTask = (taskId) => {
 		const tasksToApproval = sendToApproval.map((task) =>
