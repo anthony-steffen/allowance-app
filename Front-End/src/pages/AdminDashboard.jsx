@@ -6,21 +6,18 @@ import BlackList from "../components/BlackList";
 import {API} from "../services/api";
 
 const AdminDashboard = () => {
-	const {sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
+	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
 		useContext(TaskContext);
 
 	const { colorMode } = useColorMode();
 
-	// Função para carregar as tarefas aprovadas na tabela SendToApproval
-	const handleLoadApproval = useCallback(async () => {
-		const response = await API.get("/approvals");
-		const data = await response.json();
-		setSendToApproval(data);
+	useCallback(async () => {
+		const { data } = await API.get("/approvals");
+		if (data.length > 0) {
+			setSendToApproval(data);
+		}
 	}, [setSendToApproval]);
-	
-	onload = () => {
-		handleLoadApproval();
-	};
+			
 
   const handleToggleTask = (taskId) => {
 		const tasksToApproval = sendToApproval.map((task) =>
@@ -74,7 +71,7 @@ const AdminDashboard = () => {
 									}
                   >
    
-									<Text>{task.description}</Text>
+									<Text>{task.title}</Text>
 									{task.status === "completed" ? (
 										<VStack>
 											<CheckCircleIcon

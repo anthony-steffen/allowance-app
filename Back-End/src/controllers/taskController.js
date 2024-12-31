@@ -157,9 +157,20 @@ const requestTaskApproval = async (req, res) => {
     res.status(500).json({ message: 'Erro ao solicitar aprovação.', error });
   }
 }
+
+// Resetar as tarefas para os valores iniciais no banco de dados
+const resetTasks = async (req, res) => {
+  try {
+    await Task.update(
+      { status: 'pending' },
+      { where: { status: 'completed' } }
+    );
+    res.status(200).json({ message: 'Tarefas resetadas com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao resetar as tarefas.', error });
+  }
+}
  
-
-
 module.exports = {
   createTask,
   getAllTasks,
@@ -170,4 +181,5 @@ module.exports = {
   toggleTaskCompletion,
   completeAllTasks,
   requestTaskApproval,
+  resetTasks,
 };

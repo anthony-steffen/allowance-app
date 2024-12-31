@@ -3,7 +3,7 @@ const { Approval, SendToApproval } = require('../models');
 // Função para Buscar todas as aprovações
 const getApprovals = async (_req, res) => {
   try {
-    const approvals = await Approval.findAll();
+    const approvals = await SendToApproval.findAll();
     res.status(200).json(approvals);
   } catch (error) {
     console.error(error);

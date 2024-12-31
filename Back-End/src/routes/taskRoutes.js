@@ -10,7 +10,8 @@ const {
   getDailyTasks,
   toggleTaskCompletion,
   completeAllTasks,
-  requestTaskApproval
+  requestTaskApproval,
+  resetTasks,
 
 }
   = require('../controllers/taskController');
@@ -29,5 +30,6 @@ router.get('/daily',authenticate, getDailyTasks);
 router.patch('/:id/toggle', toggleTaskCompletion);
 router.post('/complete-all', completeAllTasks);
 router.post('/approval', requestTaskApproval);
+router.post('/reset', resetTasks);
 
 module.exports = router;
