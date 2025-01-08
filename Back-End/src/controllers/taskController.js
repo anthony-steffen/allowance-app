@@ -13,7 +13,7 @@ const createTask = async (req, res) => {
 };
 
 // Obter todas as tarefas
-const getAllTasks = async (req, res) => {
+const getAllTasks = async (_req, res) => {
   try {
     const tasks = await Task.findAll({
       attributes: ['id', 'title', 'description', 'dueDate', 'value', 'status'],

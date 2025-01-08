@@ -213,7 +213,7 @@ export const TaskProvider = ({ children }) => {
 	
 			const approvalEntry =
 				{
-					date: new Date(),
+					date: getTodayDate(),
 					tasks,
 					penalties: punishment,
 					netValue,

@@ -1,12 +1,12 @@
 
 module.exports = (sequelize, DataTypes) => {
   const approval = sequelize.define('Approval', {
-    date: DataTypes.DATE,
+    date: DataTypes.STRING,
     tasks: DataTypes.JSON,
     penalties: DataTypes.JSON,
     netValue: DataTypes.FLOAT
   }, {
-    timestamps: true,
+    timestamps: false,
     tableName: 'Approvals',
   });
  

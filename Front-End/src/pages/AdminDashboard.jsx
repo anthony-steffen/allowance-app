@@ -1,23 +1,37 @@
-import { useCallback, useContext } from "react";
+import { useContext, useEffect, } from "react";
 import TaskContext from "../context/taskContext";
 import { useColorMode, Text, Flex, Heading, List, Button, VStack, Card } from "@chakra-ui/react";
 import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import BlackList from "../components/BlackList";
-import {API} from "../services/api";
+import { API } from "../services/api";
+
 
 const AdminDashboard = () => {
 	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
 		useContext(TaskContext);
 
-	const { colorMode } = useColorMode();
+		
+		const { colorMode } = useColorMode();
+		
+		useEffect(() => {
+			const loadTasks = async () => {
 
-	useCallback(async () => {
-		const { data } = await API.get("/approvals");
-		if (data.length > 0) {
-			setSendToApproval(data);
-		}
-	}, [setSendToApproval]);
-			
+				const { data } = await API.get("/approvals");
+		
+				const tasks = data.map((task) => task.tasks).flat().map((task) => task);
+				console.log(tasks)
+				setSendToApproval(tasks);
+			};
+			loadTasks();
+		}, [setSendToApproval]);
+		// console.log(sendToApprovalDate);
+
+		// 	const { data } = await API.get("/approvals");
+		// 	const tasks = data.map((task) => task.tasks).flat().map((task) => task);
+		// 	console.log(tasks);
+		// 	setSendToApproval(tasks);
+		// }, [setSendToApproval]);
+
 
   const handleToggleTask = (taskId) => {
 		const tasksToApproval = sendToApproval.map((task) =>

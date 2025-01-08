@@ -59,12 +59,16 @@ const Home = () => {
 	// 		duration: 3000,
 	// 	});
 	// };
-	
+	const date = new Date().toLocaleDateString("pt-BR");
+	console.log(date);
 	const handleApprovalRequest = async () => {
 		try {
-			const { data } = await API.post("/approvals/request", { tasks: completedTasks });
+			const date = new Date().toLocaleDateString("pt-BR");
+			const { data } = await API.post("/approvals/request", {date, tasks: completedTasks });
+			console.log(data.approval);
 			setTasks([]);
 			setSendToApproval(data.approval.tasks);
+			console.log(data.approval);
 			localStorage.setItem("approvalDate", today);
 			toast({
 				title: "Solicitação enviada para aprovação.",
