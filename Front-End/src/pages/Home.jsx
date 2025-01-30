@@ -34,7 +34,6 @@ const Home = () => {
 		loading,
 	} = useContext(TaskContext);
 
-	const today = new Date().toLocaleDateString("pt-BR");
 	const toast = useToast();
 	const { colorMode } = useColorMode();
 
@@ -45,31 +44,31 @@ const Home = () => {
 	const allTasksCompleted = tasks.every((task) => task.status === "completed");	
 	const progress =
 		tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
-	
 
-	// const handleApprovalRequest = async () => {
-	// 	setSendToApproval(tasks);
-	// 	setTasks([]);
-	// 	// Salva a data de aprovação no localStorage
-	// 	localStorage.setItem("approvalDate", today);
-	// 	toast({
-	// 		title: "Solicitação enviada para aprovação.",
-	// 		description: `Você acumulou R$ ${totalCompletedTasks.toFixed(2)} hoje.`,
-	// 		status: "success",
-	// 		duration: 3000,
-	// 	});
-	// };
-	const date = new Date().toLocaleDateString("pt-BR");
-	console.log(date);
 	const handleApprovalRequest = async () => {
 		try {
-			const date = new Date().toLocaleDateString("pt-BR");
-			const { data } = await API.post("/approvals/request", {date, tasks: completedTasks });
-			console.log(data.approval);
+			const today = new Date().toLocaleDateString("pt-BR");
+			const lastApprovalDate = localStorage.getItem("approvalDate");
+	
+			// Verifica se já houve uma solicitação para hoje
+		if (lastApprovalDate === today) {
+			toast({
+				title: "Ação não permitida.",
+				description: "Você já enviou uma solicitação hoje.",
+				status: "warning",
+				duration: 3000,
+			});
+			return;
+		}	
+			// Caso contrário, permite a solicitação
+			const { data } = await API.post("/approvals/request", {
+				date: today,
+				tasks: completedTasks,
+			});
 			setTasks([]);
 			setSendToApproval(data.approval.tasks);
-			console.log(data.approval);
 			localStorage.setItem("approvalDate", today);
+	
 			toast({
 				title: "Solicitação enviada para aprovação.",
 				description: `Você acumulou R$ ${totalCompletedTasks.toFixed(2)} hoje.`,
@@ -77,14 +76,20 @@ const Home = () => {
 				duration: 3000,
 			});
 		} catch (error) {
+			// Captura a mensagem específica do back-end
+			const errorMessage =
+				error.response && error.response.data && error.response.data.error
+					? error.response.data.error
+					: "Erro desconhecido ao enviar solicitação.";
+	
 			toast({
 				title: "Erro ao enviar solicitação de aprovação.",
-				description: error.message,
+				description: errorMessage,
 				status: "error",
 				duration: 3000,
 			});
 		}
-	}
+	};	
 
 	return (
 		<VStack p={2} width={{ base: "100%" }} mx="auto" flexDir={"column"}>

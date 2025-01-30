@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const { Task } = require('../models');
 const {Punishment} = require('../models');
 
@@ -12,19 +13,19 @@ const createTask = async (req, res) => {
   }
 };
 
-// Obter todas as tarefas
+//Verifica se já existe se as tarefas já foram carregadas para só assim obter todas as tarefas
 const getAllTasks = async (_req, res) => {
+
+  const today = new Date().toLocaleDateString("pt-BR").split('T')[0]
+  console.log(today)
   try {
-    const tasks = await Task.findAll({
-      attributes: ['id', 'title', 'description', 'dueDate', 'value', 'status'],
-    });
+    const tasks = await Task.findAll({where: {dueDate: today}});
     const newTasks = tasks.map((task) => {
       return {
         id: task.id,
         title: task.title,
         description: task.description,
         dueDate: task.dueDate.toLocaleDateString("pt-BR"),
-        value: task.value,
         status: task.status,
       };
     });

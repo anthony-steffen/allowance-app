@@ -16,11 +16,9 @@ const createApproval = async (req, res) => {
   try {
     const { date, tasks, penalties, netValue } = req.body;
 
-    // Formata a data no padrão "dd/mm/yyyy"
-    const formattedDate = new Date(date).toLocaleDateString('pt-BR'); // Exemplo: "06/01/2025"
 
     // Verifica se já existe uma aprovação para essa data
-    const existingApproval = await Approval.findOne({ where: { date: formattedDate } });
+    const existingApproval = await Approval.findOne({ where: { date } });
     if (existingApproval) {
       return res.status(400).json({
         error: 'Já existe uma aprovação registrada para esta data.',
@@ -29,7 +27,7 @@ const createApproval = async (req, res) => {
 
     // Cria a aprovação
     const approval = await Approval.create({
-      date: formattedDate,
+      date,
       tasks,
       penalties,
       netValue,
@@ -51,13 +49,28 @@ const createApproval = async (req, res) => {
 // Função para enviar uma solicitação de aprovação para o back-end
 const sendApprovalRequest = async (req, res) => {
   try {
-    const {date, tasks } = req.body;
+    const { date, tasks } = req.body;
+
+    // Verifica se já existe uma solicitação de aprovação para essa data
+    const existingRequest = await SendToApproval.findOne({ where: { date } });
+    if (existingRequest) {
+      return res.status(400).json({
+        error: 'Já existe uma solicitação de aprovação registrada para esta data.',
+      });
+    }
+    // Cria uma nova solicitação, caso não exista
     const approval = await SendToApproval.create({ date, tasks });
-    res.status(201).json({ message: 'Solicitação de aprovação enviada com sucesso', approval });
-  }
-  catch (error) {
+
+    res.status(201).json({
+      message: 'Solicitação de aprovação enviada com sucesso',
+      approval,
+    });
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao enviar solicitação de aprovação', message: error.message });
+    res.status(500).json({
+      error: 'Erro ao enviar solicitação de aprovação',
+      message: error.message,
+    });
   }
 }
 

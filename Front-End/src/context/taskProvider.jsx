@@ -60,15 +60,7 @@ export const TaskProvider = ({ children }) => {
 		localStorage.setItem("penalties", JSON.stringify(penalties));
 		localStorage.setItem("today", getTodayDate());
 		localStorage.setItem("withdrawal", JSON.stringify(withdrawal));
-	}, [
-		tasks,
-		tasksLoadedToday,
-		sendToApproval,
-		approvedTasks,
-		penalties,
-		paymentRequest,
-		withdrawal,
-	]);
+	}, [ tasks, tasksLoadedToday, sendToApproval, approvedTasks, penalties, paymentRequest, withdrawal]);
 
 	// Monitora a chegada de um novo dia para limpar as tarefas
 	const checkNewDay = setInterval(() => {
@@ -203,7 +195,7 @@ export const TaskProvider = ({ children }) => {
 	}, [toast]);
 
 	// Enviar aprovação / Tarefas completadas + penalidades
-	const handleApproval = useCallback(async () => {
+	const handleApproval = useCallback( async () => {
 		try {
 			const tasks = sendToApproval.filter((task) => task.status === "completed");
 			const punishment = penalties.filter((penalty) => penalty.add === true);
@@ -291,42 +283,8 @@ export const TaskProvider = ({ children }) => {
 		}
 	}, [toast, paymentRequest]);
 	
-	// const handleRequestPayment = useCallback(() => {
-	// 	const totalValue = paymentRequest.map((task) => task.netValue).reduce((acc, value) => acc + value, 0);
-
-	// 	if (totalValue === 0) {
-	// 		toast({
-	// 			title: "Nenhum valor acumulado.",
-	// 			description: "Você ainda não realizou nenhuma tarefa aprovada.",
-	// 			status: "error",
-	// 			duration: 3000,
-	// 			position: "top",
-	// 		});
-	// 		return;
-	// 	}
-
-	// 	localStorage.removeItem("approvedTasks");
-	// 	setWithdrawal(true);
-
-	// 	toast({
-	// 		title: "Solicitação enviada!",
-	// 		description: `Você solicitou o pagamento de R$ ${totalValue}.`,
-	// 		status: "success",
-	// 		duration: 3000,
-	// 		position: "top",
-	// 	});
-
-	// 	// Zera as tarefas aprovadas
-	// 	setApprovedTasks([]);
-	// }, [toast, paymentRequest]);
-
 	const handleWithdrawal = useCallback(() => {
-		setTasks([]);
-		setApprovedTasks([]);
-		setPenalties([]);
-		setSendToApproval([]);
-		setPaymentRequest([]);
-		setWithdrawal(false);
+		setTasks([]),setApprovedTasks([]),setPenalties([]),setSendToApproval([]),setPaymentRequest([]),setWithdrawal(true);
 		toast({
 			title: "Pagamento efetuado!",
 			description: "Pagamento foi efetuado com sucesso.",
@@ -337,60 +295,43 @@ export const TaskProvider = ({ children }) => {
 	}, [toast]);
 
 	const store = useMemo(
-		() => ({
-			tasks,
-			setTasks,
-			sendToApproval,
-			setSendToApproval,
-			tasksLoadedToday,
-			setTasksLoadedToday,
-			approvedTasks,
-			setApprovedTasks,
-			penalties,
-			setPenalties,
-			loading,
-			setLoading,
+		() => ({ 
+			tasks, setTasks,
+			sendToApproval, setSendToApproval,
+			tasksLoadedToday, setTasksLoadedToday,
+			approvedTasks, setApprovedTasks,
+			penalties, setPenalties,
+			loading, setLoading,
+			paymentRequest, setPaymentRequest,
+			withdrawal, setWithdrawal,
 			handleLoadTasks,
 			handleLoadPenalties,
 			handleToggleTask,
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			paymentRequest,
-			setPaymentRequest,
 			handleRequestPayment,
 			handleWithdrawal,
-			withdrawal,
-			setWithdrawal,
 		}),
 		[
-			tasks,
-			setTasks,
-			sendToApproval,
-			setSendToApproval,
-			tasksLoadedToday,
-			setTasksLoadedToday,
-			approvedTasks,
-			setApprovedTasks,
-			penalties,
-			setPenalties,
-			loading,
-			setLoading,
+			tasks, setTasks,
+			sendToApproval, setSendToApproval,
+			tasksLoadedToday, setTasksLoadedToday,
+			approvedTasks, setApprovedTasks,
+			penalties, setPenalties,
+			loading, setLoading,
+			paymentRequest, setPaymentRequest,
+			withdrawal, setWithdrawal,
 			handleLoadTasks,
 			handleLoadPenalties,
 			handleToggleTask,
 			handleCompleteAllTasks,
 			handleApproval,
 			togglePenalty,
-			paymentRequest,
-			setPaymentRequest,
 			handleRequestPayment,
 			handleWithdrawal,
-			withdrawal,
-			setWithdrawal,
 		]
 	);
-
 	return <Provider value={store}>{children}</Provider>;
 };
 

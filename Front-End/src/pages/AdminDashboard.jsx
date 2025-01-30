@@ -7,30 +7,31 @@ import { API } from "../services/api";
 
 
 const AdminDashboard = () => {
-	const { sendToApproval, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
-		useContext(TaskContext);
-
-		
-		const { colorMode } = useColorMode();
-		
+	const { sendToApproval, approvedTasks, setSendToApproval, handleApproval, paymentRequest, handleWithdrawal, withdrawal } =
+	useContext(TaskContext);
+	
+	
+	const { colorMode } = useColorMode();
+	
+	// Recuperar tarefas enviadas para aprovação no banco de dados
 		useEffect(() => {
+			if (withdrawal === false && approvedTasks.length === 0) {
 			const loadTasks = async () => {
-
+				
 				const { data } = await API.get("/approvals");
-		
 				const tasks = data.map((task) => task.tasks).flat().map((task) => task);
 				console.log(tasks)
 				setSendToApproval(tasks);
+
 			};
 			loadTasks();
-		}, [setSendToApproval]);
-		// console.log(sendToApprovalDate);
+		}
+		return () => {
+			setSendToApproval([]);
+		}
+	}, [setSendToApproval, withdrawal, approvedTasks]);
 
-		// 	const { data } = await API.get("/approvals");
-		// 	const tasks = data.map((task) => task.tasks).flat().map((task) => task);
-		// 	console.log(tasks);
-		// 	setSendToApproval(tasks);
-		// }, [setSendToApproval]);
+	
 
 
   const handleToggleTask = (taskId) => {
@@ -54,7 +55,7 @@ const AdminDashboard = () => {
     border={colorMode === "dark" ? "1px solid #343e4b" : "1px solid #cbd5e0"} 
     rounded={5}
     >
-			{sendToApproval.length > 0 ? (
+			{sendToApproval.length > 0 && paymentRequest.length === 0 ? (	
 				<Flex
 					align="center"
 					width={{ base: "100%"}}

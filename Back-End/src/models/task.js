@@ -4,7 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     description: DataTypes.STRING,
     status: DataTypes.STRING,
-    dueDate: DataTypes.DATE,
+    dueDate: {
+    type: DataTypes.STRING, // Supondo que esteja no formato "dd/mm/yyyy"
+    allowNull: false,
+    unique: true, // Restringe valores duplicados para a mesma data
+  },
     value: DataTypes.FLOAT,
   }, {
     timestamps: false,

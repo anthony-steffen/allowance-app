@@ -20,7 +20,7 @@ module.exports = {
         defaultValue: 'pending'
       },
       dueDate: {
-        type: Sequelize.DATE
+        type: Sequelize.STRING,
       },
       value: {
         type: Sequelize.FLOAT
