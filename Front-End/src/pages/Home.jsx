@@ -37,6 +37,8 @@ const Home = () => {
 	const toast = useToast();
 	const { colorMode } = useColorMode();
 
+
+	// PROCURAR VER A SAIDA DO ESTADO SENDTOAPPROVAL PARA FAZER O VALOR DAS TAREFAS REALIZADAS
 	const completedTasks = tasks.filter((task) => task.status === "completed");
 	const totalCompletedTasks = completedTasks.reduce((acc, task) => acc + task.value, 0);
 	const totalValue = paymentRequest.reduce( (acc, task) => acc + task.netValue, 0);

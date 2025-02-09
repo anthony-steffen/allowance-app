@@ -16,16 +16,15 @@ const createTask = async (req, res) => {
 //Verifica se já existe se as tarefas já foram carregadas para só assim obter todas as tarefas
 const getAllTasks = async (_req, res) => {
 
-  const today = new Date().toLocaleDateString("pt-BR").split('T')[0]
-  console.log(today)
   try {
-    const tasks = await Task.findAll({where: {dueDate: today}});
+ 
+    const tasks = await Task.findAll();
     const newTasks = tasks.map((task) => {
       return {
         id: task.id,
         title: task.title,
         description: task.description,
-        dueDate: task.dueDate.toLocaleDateString("pt-BR"),
+        dueDate: task.dueDate,
         status: task.status,
       };
     });
